@@ -6,6 +6,7 @@ A record of what was built and what was learned, especially around extending the
 
 | Version | What shipped |
 |---|---|
+| [v0.9.2](#v092--trigger-phrase-standardization--interviewer-bash-allowlist-2026-04-28-1632) | Standardize the mock-interview trigger phrase to a single canonical `start mock interview` (drop the dual "first-time" wording); add `.claude/settings.json` with a tight read-only Bash allowlist (`ls`, `git status,diff,log,show`, `cat`, `date`, `wc`, `jq`) so per-feature inspection no longer prompts |
 | [v0.9.1](#v091--devlog--claudemd-conventions-2026-04-28-1621) | Set up `docs/devlog.md` with TL;DR + learning-tags table; add documentation list, versioning rule, end-of-session reminder, tailored "ship it" shortcut, and GitHub upload safety section to CLAUDE.md |
 | [v0.9.0](#v090--first-end-to-end-mock--comprehensive-post-mortem-fixes-2026-04-28-1615) | Battle-tested with first 60-min mock; folded findings into protocol/rubric/projects; new "Spec-as-starting-point" pattern; seniority calibration; container/plug-in architecture documented; HANDOFF.md retired and absorbed into CLAUDE.md |
 | [v0.0.0](#v000--initial-build--pre-mock-iteration-2026-04-28) | Initial build of the framework: mode router, INTERVIEWER.md protocol, todo-list project (3 base + 2 stretch features), feedback rubric, project contract, top-level meta-roadmap |
@@ -19,6 +20,25 @@ A record of what was built and what was learned, especially around extending the
 | `[note]` | Useful context, well-documented — good to have written down but you'd find it in the docs |
 | `[insight]` | Non-obvious; meaningfully changes how you design or debug something |
 | `[gotcha]` | A specific trap that bit you; high risk of biting you again — bookmark this |
+
+---
+
+## v0.9.2 — trigger-phrase standardization + interviewer Bash allowlist (2026-04-28 16:32)
+
+**Review:** not yet
+
+**What was built:**
+- **Standardized the mock-interview trigger to a single canonical phrase: `start mock interview`.** The README previously documented a dual form (`help me setup and start mock interview` for first-timers, `start mock interview` for repeat users). The dual form added zero functional value — the protocol's Phase 1 walks every candidate through full setup regardless — and it implied a behavioral difference that didn't exist. README "Kickstart prompts" and "Quick start" sections now both use the bare canonical phrase, with explicit copy noting that the full setup walkthrough runs every time.
+- **`.claude/settings.json`** — first checked-in settings file for this repo. Read-only Bash allowlist for the commands the interviewer protocol invokes during a mock: `ls`, `/bin/ls`, `git status`, `git diff`, `git log`, `git show`, `cat`, `date`, `wc`, `jq`. Pre-approves the per-feature inspection flow (Phase 2 step 3a) and the JSONL transcript flow (Phase 3 step 2) without granting any write/destructive permissions.
+- **Deliberately NOT auto-allowed:** `python3 -m pytest` / `python3 test_*.py` / `pytest` (running candidate test code is a different threat surface — should still prompt). `Read(~/.claude/projects/**)` (transcript-dir read scope; per-session consent stays in place). `cp` / `mv` / `rm` / `mkdir` / `git add` / `git commit` / etc. (all write/state-mutating commands intentionally excluded).
+- **`roadmap.md`** — backlog item for `.claude/settings.json` crossed off with strikethrough + `(v0.9.2)` tag, including a parenthetical noting which commands shipped and which were deliberately excluded. Sets the convention for how future shipped backlog items get marked.
+
+**Key technical learnings:**
+- `[insight]` Auto-allowing read-only Bash commands removes real friction during a mock without changing the security posture meaningfully — the same commands would be approved every round anyway. The interesting line is *between* read-only inspection (always-allow) and code execution (still prompt). Putting `python3 -m pytest` on the prompt side keeps a meaningful checkpoint: the interviewer reads code freely, but executing arbitrary candidate code stays a deliberate consent moment.
+- `[note]` Trigger-phrase standardization is one of those quiet wins where the change is small but the prior dual-form was actively confusing: a first-time user reading the README would think "do I need the prefix?" and a returning user would wonder if they were missing setup. One canonical phrase + an explicit "setup runs every time" line removes both confusions.
+
+**Process learnings:**
+- `[note]` First "ship it" run after defining the shortcut in v0.9.1 — the flow worked clean: stage → devlog → commit → tag → verify, no improvisation needed. The convention will hold up as long as version-naming decisions stay simple (patch vs. minor); the moment a release decision needs more thought, the user gets to call it.
 
 ---
 

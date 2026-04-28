@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(/bin/ls:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(cat:*)",
+      "Bash(date:*)",
+      "Bash(wc:*)",
+      "Bash(jq:*)"
+    ]
+  }
+}

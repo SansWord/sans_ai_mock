@@ -16,21 +16,15 @@ Multiple project domains. One protocol. Honest feedback.
 
 ## Kickstart prompts (copy-paste)
 
-### To run your first mock
+### To run a mock
 
 Open Claude Code in the repo root, then send:
 
 ```
-help me setup and start mock interview
-```
-
-The interviewer will walk you through prep (project pick, working-directory path, permission grant, second-terminal pair-programmer setup) before starting the clock. Have a second terminal ready.
-
-Once you know the flow, drop the prefix and just send:
-
-```
 start mock interview
 ```
+
+The interviewer walks you through the full setup (seniority calibration, project pick, working-directory path, permission grant, pair-programmer tool, briefing) before starting the clock — every time, regardless of whether it's your first mock or your tenth. Have a second terminal ready for your pair programmer.
 
 ### To work on the tool itself (developer mode)
 
@@ -77,15 +71,12 @@ Outside of `start mock interview`, the interviewer-side Claude defaults to **dev
    claude
    ```
 
-3. **Tell it to start.** First-timers — ask for setup help so the interviewer paces you through the prep before kickoff:
-   ```
-   help me setup and start mock interview
-   ```
-
-   On later runs, once you know the flow, just send the bare phrase:
+3. **Tell it to start.** Send the canonical trigger phrase:
    ```
    start mock interview
    ```
+
+   The interviewer always paces you through full setup (seniority, project pick, workspace path, permissions, AI-tool choice, briefing) before starting the clock — no separate "first time" prefix needed.
 
 4. The interviewer will:
    - List the available projects and ask you to pick one (or say "random").
