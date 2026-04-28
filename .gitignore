@@ -1,0 +1,19 @@
+# Per-mock interviewer notes — generated during interview mode, kept local.
+# These are the interviewer's scratch memory for feedback generation.
+# Don't commit them; they contain candidate behavior observations and accumulate per mock run.
+projects/*/NOTE-*.md
+
+# Claude Code local user settings (permissions overrides etc.) — personal, not shared.
+# Note: .claude/settings.json (without .local) IS intended to be committed if you have one.
+.claude/settings.local.json
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+env/
