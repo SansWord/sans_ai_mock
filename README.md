@@ -37,16 +37,16 @@ start mock interview
 Open Claude Code in the repo root, then send:
 
 ```
-Read HANDOFF.md and roadmap.md, then summarize the current state and the most useful
+Read CLAUDE.md and roadmap.md, then summarize the current state and the most useful
 next task to work on. Don't start coding yet — wait for me to pick.
 ```
 
-This loads context (handoff notes + meta-roadmap) without committing to any specific change. The default mode is developer mode, so Claude is free to edit files once you give direction.
+This loads architecture + meta-roadmap context without committing to any specific change. The default mode is developer mode, so Claude is free to edit files once you give direction.
 
 If you already know what you want:
 
 ```
-Read HANDOFF.md for context, then [add the bank-ledger project / fix X / etc].
+Read CLAUDE.md for the architecture and orientation, then [add the bank-ledger project / fix X / etc].
 ```
 
 ---
@@ -111,11 +111,10 @@ sans_ai_mock/
 ├── INTERVIEWER.md         # interviewer protocol; loaded only when in interview mode
 ├── roadmap.md             # meta: roadmap for extending this tool itself
 ├── feedback_rubric.md     # 6-dimension assessment guide used at end of mock
-├── HANDOFF.md             # notes from the initial-build session
 └── projects/
     ├── README.md              # contract for adding a new project
     └── <project-name>/        # one folder per project domain
-        ├── README.md          # interviewer-facing brief (metadata, what this tests, pass/fail anchor)
+        ├── README.md          # interviewer-facing brief (question metadata, what it exercises, where to look)
         ├── roadmap.md         # interviewer-only feature list (3 base + 1-2 stretch) — stays here
         ├── NOTE-<DATE>.md     # interviewer scratch notes per mock run — gitignored, generated at runtime
         └── start_folder/      # candidate-facing bundle — copied to candidate's workspace
@@ -134,7 +133,7 @@ sans_ai_mock/
 
 If you want a real mock with surprise, **don't read these before starting**:
 - `projects/<name>/roadmap.md` — the per-project feature list (base + stretch). Reading this spoils the follow-up features.
-- `projects/<name>/README.md` — the **interviewer-facing** project brief. Spoils the pass/fail anchor, target seniority, and exactly what behaviors the interviewer is watching for. (Don't confuse this with `projects/<name>/start_folder/README.md`, which IS for you.)
+- `projects/<name>/README.md` — the **interviewer-facing** project brief. Lists which rubric dimensions the question exercises and the concrete per-feature signals the interviewer watches for — reading it spoils the surprise of which behaviors are under observation. (Don't confuse this with `projects/<name>/start_folder/README.md`, which IS for you.)
 
 You're free to read anytime:
 - `README.md`, `CLAUDE.md` (root) — the protocol itself.

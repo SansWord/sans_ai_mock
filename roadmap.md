@@ -56,23 +56,23 @@ The point is **domain variety**: a candidate using this tool for repeated practi
 - [ ] **Examples folder** — sample completed mocks (with anonymized transcripts and feedback) so people can see what good practice looks like before doing their own.
 - [ ] **LICENSE.** Probably MIT to keep it permissive.
 
-## Backlog from cold-read review (2026-04-28)
+## Backlog (cold-read + first-mock findings)
 
-Items surfaced by a fresh-context audit of the docs. The high-priority items (Phase 1 missing tool question, pass-anchor / time-table mismatch, Feature 2+ delivery contradiction, decline-permission fallback, path-encoding rule, rubric Dim 4/5 overlap) have been fixed. These are the rest:
+Items surfaced by docs review and the first end-to-end mock run (2026-04-28). Many of the original high-priority items (Phase 1 missing tool question, pass-anchor / time-table mismatch, Feature 2+ delivery contradiction, decline-permission fallback, path-encoding rule, rubric Dim 4/5 overlap, scope-creep "Spec-as-starting-point" pattern, post-mock candidate-experience fixes, container/plug-in architecture documentation, HANDOFF.md retirement) have been fixed. These are the rest:
 
-- [ ] **`HANDOFF.md:35` says "Both are Claude Code instances."** Counter to the tool-agnostic pivot — pair-programmer side can be any tool. Update.
 - [ ] **`README.md:60` "Two Claude (or compatible) sessions."** Claude-first framing. Replace with explicit asymmetry: interviewer side requires Claude Code (mode-router lives in `CLAUDE.md`), candidate side is tool-agnostic.
 - [ ] **`start_folder/README.md` still names `feature.spec.md` / `feature.plan.md`.** Claude-Code/Superpowers convention leaking into candidate-facing instructions. Either soften to "an example workflow" or strip.
 - [ ] **Picker-description spec says "first paragraph"** which is fuzzy and easy to overload. Tighten contract in `projects/README.md` to "first sentence" or a hard char limit.
-- [ ] **Run one full mock end-to-end on yourself.** Still unrun. Fold findings back into protocol + retire `HANDOFF.md` once findings are absorbed.
-- [ ] **HANDOFF.md lifecycle.** Currently doing double duty (initial-build artifact + ongoing notes). Decide: delete after first real mock per its stated lifecycle, OR rename to a durable doc (e.g. `CONTRIBUTING.md` / `NOTES.md`).
+- [ ] **Add `.claude/settings.json`** with a read-only Bash allowlist (`ls`, `git status`, `git diff`, `git log`, `cat`) for the interviewer, so per-feature inspection doesn't hit a permission prompt every time and break flow.
 - [ ] **`feedback_rubric.md` headings with `&`** produce ugly auto-anchors (`#1-spec--plan-discipline`). Cosmetic — fix if anyone starts linking to dimensions.
 - [ ] **No `.gitignore` in `start_folder/`.** When the candidate runs `git init && git add .`, they pick up `__pycache__/` after first test run. Minor mock friction.
-- [ ] **Time budget not stated to candidate.** Interviewer knows 60 min; candidate sees vague "time pressure." Consider stating the round length in the candidate-facing workflow reminder.
+- [ ] **Time budget not stated to candidate.** Interviewer knows 60 min; candidate sees vague "time pressure." Consider stating the round length in the candidate-facing workflow reminder. (Partially addressed: clock-start prompt now mentions 60 min coding + post-clock untimed feedback, but the workflow reminder block itself doesn't state it.)
 - [ ] **Verify access tilde-expansion edge case.** `INTERVIEWER.md` `ls <path>` step doesn't tell the interviewer to expand `~` first. Usually works but can fail if path is passed quoted. Defensive note.
-- [ ] **Documentation drift surface.** "Files the candidate should not peek at" exists in 4 places (root README, INTERVIEWER.md, projects/README.md, HANDOFF.md). Pick one canonical source and have others link to it.
+- [ ] **Documentation drift surface.** "Files the candidate should not peek at" exists in 3 places (root README, INTERVIEWER.md, projects/README.md). Pick one canonical source and have others link to it.
 - [ ] **Project-layout diagrams duplicated** (root README, projects/README.md ×2). Same drift risk.
 - [ ] **Calibrate the rubric and pass anchor** against real data. Both were authored from reasoning, not observation. Once a few mocks have run, revisit which dimensions actually distinguish strong from weak candidates.
+- [ ] **Project-recommendation logic for "random" picker.** Once 3+ projects exist, the seniority answer (now collected in Phase 1 step 1) should inform which project to suggest — junior → todo-list, senior → bank-ledger or similar. Currently random ignores seniority.
+- [ ] **Hyphenation cleanup pass.** `pair programmer` (noun) vs `pair-programmer` (adjective) is currently used correctly per the compound-adjective rule, but a future doc-edit could drift. Optional: add a one-line style note somewhere.
 
 ## Non-goals
 

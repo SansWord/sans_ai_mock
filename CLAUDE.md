@@ -2,7 +2,7 @@
 
 > Auto-loaded by Claude Code in this directory. Default mode is **developer mode** — see modes below.
 
-This repo is a reusable mock-interview kit for the AI-pair-programming round. It runs in two modes that you must keep separate:
+This repo is a reusable mock-interview kit for the AI-pair-programming round. It runs in two modes that you must keep separate.
 
 ## Modes
 
@@ -37,22 +37,63 @@ Mixing them silently produces broken mocks (interviewer accidentally rewrites `r
 
 When in doubt about which mode applies, **ask the user** before acting.
 
-## Repo orientation (developer mode)
+## Architecture: container + plug-in projects
 
-| File | Purpose |
-|------|---------|
-| `README.md` | Public-facing how-to-use |
-| `CLAUDE.md` (this file) | Mode router |
-| `INTERVIEWER.md` | The full interviewer protocol; loaded only when in interview mode |
-| `roadmap.md` | Meta — roadmap for extending this tool |
-| `feedback_rubric.md` | 6-dimension assessment guide used at end of mock |
-| `HANDOFF.md` | Notes from the initial-build session, for future maintainers |
-| `projects/README.md` | Contract for adding a new project |
-| `projects/<name>/` | One project domain (starter code + per-project roadmap) |
+The tool is structured as a **container (interviewer framework)** that runs **plug-in projects**. This separation is load-bearing — keep it clean when extending the tool.
+
+**Framework layer** (the container):
+- `INTERVIEWER.md` — the interviewer protocol (Phase 1 setup, Phase 2 per-feature loop, Phase 3 wrap-up). Generic across projects.
+- `feedback_rubric.md` — the 6-dimension assessment rubric. Generic across projects.
+- `CLAUDE.md` (this file) — mode router + architecture + repo orientation.
+- `README.md` (root) — public-facing how-to-use.
+- `roadmap.md` (root) — roadmap for extending the framework.
+- `projects/README.md` — the contract every plug-in project must satisfy.
+
+**Project layer** (the plug-ins):
+- `projects/<name>/` — one folder per project domain. Each contains `README.md` (interviewer-facing question brief), `roadmap.md` (interviewer-only feature list with per-feature time estimates), `start_folder/` (candidate-facing bundle), and at runtime `NOTE-<DATE>.md` (interviewer scratch).
+
+**Dependency direction (strict): project depends on framework, never the reverse.**
+
+What this means in practice:
+
+- **Adding a new project must NOT require editing the framework.** If you find yourself editing `INTERVIEWER.md` or `feedback_rubric.md` to support a new project, that's a smell — the new project is leaking project-specific concerns into the framework. Push back to the project layer.
+- **Project-specific routing logic doesn't belong in the framework.** "If F1-F3 finish under 30 min, drop both stretches" is project-specific guidance — it belongs in `projects/<name>/roadmap.md`'s per-feature time estimates and the interviewer's generic decision tree (`INTERVIEWER.md` Phase 2 step 3e), not as bespoke per-project rules in the protocol.
+- **Per-feature time estimates are project data.** They live in each project's `roadmap.md` feature blocks. The framework reads them; the framework doesn't define them.
+- **Interview policy is framework data.** Round length, target seniority calibration, pass/fail bar, when-to-pick — these apply uniformly across projects and live in `INTERVIEWER.md` and `feedback_rubric.md`. They do NOT belong in `projects/<name>/README.md`.
+- **Project READMEs are scoped to the question itself.** Domain metadata, what the question exercises (mapped to rubric dimensions), where to look. The interviewer applies the framework to whatever project they pick, uniformly.
+- **Cross-references go in one direction.** Project files may reference framework files (`see INTERVIEWER.md Phase 2 step 3e`). Framework files reference projects only abstractly (`projects/<chosen>/...`), never by name.
+
+If a future feature would require violating any of these, that's a sign the framework needs a new generic mechanism (configurable somewhere project-data-y), not a special case for one project.
+
+## Design decisions worth preserving
+
+These are deliberate, not accidental. Don't undo them without thinking hard about why they exist.
+
+- **Two-session split (interviewer in this repo, pair programmer in candidate's working dir) is deliberate.** Realism (a real interviewer isn't your coding agent) + surprise (the per-project `roadmap.md` stays hidden from the candidate). Don't collapse to one session "for simplicity."
+- **The interviewer never writes code.** Enforced in this file (interview mode forbids edits). Part of the realism. If a future maintainer is tempted to make the interviewer "helpful," push back — the value is in observing, not assisting.
+- **Per-project `roadmap.md` is interviewer-only.** Surprise is core to the experience. Don't move it where the candidate sees it by default, and don't paste the whole file into chat — drop one feature's `### Spec` block at a time per `INTERVIEWER.md` Phase 2 step 1.
+- **Honest feedback over soft feedback.** Codified in `feedback_rubric.md`'s "Be honest" section. If feedback ever drifts toward "everything was fine!", treat that as a bug.
+- **Tool-agnostic candidate side.** Projects do NOT ship a `CLAUDE.md` or any other AI-assistant system prompt inside `start_folder/`. Candidates bring their own pair-programming setup (Claude Code, Cursor, Copilot, Gemini CLI, or no AI). The kit evaluates how the candidate works with AI, not how well a bundled prompt does.
+
+## Repo orientation (developer mode reference)
+
+| File | Dev mode | Interview mode | Candidate |
+|------|----------|------------------|-----------|
+| `README.md` | informational | informational | yes |
+| `CLAUDE.md` (this file, mode router) | yes (auto-loaded) | yes (auto-loaded, then routes) | informational only |
+| `INTERVIEWER.md` | informational | yes (the protocol) | informational only |
+| `roadmap.md` (root, meta) | yes | rarely | informational only |
+| `feedback_rubric.md` | yes (when editing) | yes (at end of mock) | optional, post-mock |
+| `projects/README.md` | yes (when adding projects) | rarely | rarely |
+| `projects/<name>/README.md` | yes (when authoring) | yes (project brief: question metadata, what it exercises, where to look) | **NO — interviewer-only** |
+| `projects/<name>/roadmap.md` | yes (when authoring) | **yes — interviewer-only** | **NO — keeps surprise** |
+| `projects/<name>/NOTE-<DATE>.md` | rarely (gitignored) | **yes — writes during mock, re-reads at feedback time** | **NO — interviewer scratch** |
+| `projects/<name>/start_folder/README.md` | yes | yes (for picker description) | yes (copied into their workspace) |
+| `projects/<name>/start_folder/<starter>` | yes | yes | yes (copied into their workspace) |
 
 ## Common developer-mode tasks
 
-- **Adding a project**: read `projects/README.md` for the contract, then create `projects/<your-domain>/` matching the structure of `projects/todo-list/`.
-- **Editing the interviewer protocol**: edit `INTERVIEWER.md`. Test by running a real mock afterward.
-- **Editing feedback dimensions**: edit `feedback_rubric.md`. Keep the same scoring matrix shape so the interviewer can apply it consistently.
-- **Updating the meta-roadmap**: edit `roadmap.md` (root). This is the project-level plan, not a single mock.
+- **Adding a project**: read `projects/README.md` for the contract, then create `projects/<your-domain>/` matching the structure of `projects/todo-list/`. The framework should not need any edits to support the new project — if it does, you've spotted an architectural seam worth fixing first.
+- **Editing the interviewer protocol**: edit `INTERVIEWER.md`. Test by running a real mock afterward. Changes here apply to *all* projects — confirm the change makes sense across the project portfolio, not just one.
+- **Editing feedback dimensions**: edit `feedback_rubric.md`. Keep the same scoring matrix shape so the interviewer can apply it consistently. Seniority-sensitive patterns belong here, not in the protocol.
+- **Updating the meta-roadmap**: edit `roadmap.md` (root). This is the framework-level plan, not a single mock.

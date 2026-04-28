@@ -15,30 +15,47 @@ The starter project ships with `todo_feature.md` already containing Feature 1's 
 
 ### Spec
 
+> **Note:** F1's spec is the only one that ships pre-bundled in the candidate workspace as `todo_feature.md`. The block below must stay verbatim-equivalent to `start_folder/todo_feature.md` so the interviewer can drop the spec into chat without divergence. If you edit either, edit both.
+
 ```markdown
 # Feature: Filter todos by status
 
 ## Background
-The team uses TodoList in a few internal tools. Right now `list()` returns every todo, but the most common workflow is: a user wants to see only the todos they still need to do. They end up filtering on the calling side, which is repetitive across callers.
+
+The `TodoList` library is used in a few internal tools. Right now `list()` returns every todo, but the most common workflow we see is: a user wants to see *only the todos they still need to do*, not the ones they've already completed. They end up filtering on the calling side, which is repetitive and inconsistent across callers.
+
+We want to push that filter into the library itself.
 
 ## Requirements
+
 Update `TodoList.list()` to accept an optional `status` parameter:
+
 - `tl.list()` — returns all todos (current behavior, unchanged)
-- `tl.list(status="active")` — returns only todos that are NOT completed
-- `tl.list(status="completed")` — returns only todos that ARE completed
+- `tl.list(status="active")` — returns only todos that are not completed
+- `tl.list(status="completed")` — returns only todos that are completed
 
-The returned list should still be a copy.
+The returned list should still be a copy (mutating it must not affect internal state, same as today).
 
-## Out of scope (do not implement — deliberately excluded)
-If you find yourself adding any of the following, stop and reconsider:
-- Persistence, priority, due date, tags
-- **Status enums or richer status types on `Todo`** — strings on the `list()` arg only. Do NOT add a `status` field/property/kwarg to `Todo`. The `completed` boolean stays the only state.
+## Out of scope (do not implement — these have been considered and deliberately excluded)
+
+If you find yourself adding any of the following, **stop**. Either remove the work or ask the interviewer to confirm the deviation before continuing.
+
+- Persistence (no save/load to disk)
+- Priority / due date / tags
+- **Status enums or richer status types** — strings are fine on the `list()` argument. Do **not** add a `status` field, attribute, or property to `Todo`. Do **not** add a `status=` constructor kwarg. The `completed` boolean stays as the only state on `Todo`.
+- Filtering by anything other than status
+- Validation of unknown status strings beyond what the spec requires (pick a behavior, document it, move on)
 
 ## Acceptance
-1. All existing tests still pass.
-2. New behavior covered by tests.
-3. API change is backward-compatible.
-4. **Diff to `todo.py` is minimal** — no new attributes on `Todo`, no new constructor kwargs, no new exception types unless required by 1–3.
+
+1. All existing tests still pass without modification.
+2. New behavior is covered by tests.
+3. The API change is backward-compatible — calling code that does `tl.list()` with no args continues to work.
+4. **The diff to `todo.py` is minimal.** No new attributes on `Todo`, no new constructor kwargs, no new exception types unless required to satisfy 1–3. If your diff adds any of those, you have either misread the spec or are working past it; stop and reconsider.
+
+## Notes for the implementer
+
+There's no strict requirement on what to do with an unknown status string. Pick a behavior, defend it briefly when you decide.
 ```
 
 ### What to look for
@@ -200,18 +217,18 @@ Many ways to implement this — snapshot the whole list before each op (simple b
 
 ---
 
-## Time-allocation guide for the interviewer
+## Per-feature time estimates
 
-| Phase | Target time | Cumulative |
-|-------|-------------|-----------|
-| Setup + briefing | 3 min | 3 |
-| F1 (filter) | 10 min | 13 |
-| F2 (remove) | 10 min | 23 |
-| F3 (persistence) | 15 min | 38 |
-| Buffer / probing questions | 5 min | 43 |
-| F4 (tags) — if time | 12 min | 55 |
-| Feedback | 5 min | 60 |
+These are properties of the question, not the round structure. The interviewer protocol (`INTERVIEWER.md`) decides how to combine them with setup/probing/feedback budget under whatever round length is in effect.
 
-If F1-F3 take longer than 38 min, skip stretch goals entirely and start feedback at 50-55 min so the candidate gets useful feedback. Don't sacrifice feedback quality for one more feature.
+| Feature | Tier | Target time |
+|---------|------|-------------|
+| F1 (filter) | base | ~10 min |
+| F2 (remove) | base | ~10 min |
+| F3 (persistence) | base | ~15 min |
+| F4 (tags) | stretch | ~12 min |
+| F5 (undo) | stretch | ~15–20 min |
 
-If F1-F3 finish under 30 min, the candidate is fast — drop both stretch features (F4 then F5) and assess at full pace.
+Total base coding: ~35 min. Total with both stretches: ~62–67 min. Use these to plan which features fit a given round length — the per-feature pacing decision (skip F2, drop both stretches, etc.) is handled by `INTERVIEWER.md` Phase 2 step 3e using the same general decision tree it applies to any project.
+
+Feedback being untimed is intentional: rushing feedback to fit a 5-min slot was producing thin advice. The candidate's questions in the Q&A loop are where the round's value compounds — don't compress them.

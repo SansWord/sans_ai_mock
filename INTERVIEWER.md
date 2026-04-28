@@ -24,7 +24,7 @@ A 60-minute round produces enough observation volume (per-feature `git diff` out
 This NOTE file is **interviewer-only**. The candidate never reads it. It's gitignored by default — treat it as durable scratch memory that you, the interviewer, own for the session.
 
 **Write at three checkpoints:**
-1. **End of Phase 1 setup** — initial header (project, candidate's pair-programmer tool, permission state, workspace path, your observations from the picker conversation).
+1. **End of Phase 1 setup** — initial header (project, target seniority, candidate's pair-programmer tool, permission states (workspace + JSONL), workspace path, your observations from the picker conversation).
 2. **End of each feature in Phase 2** — append a per-feature block (timing, spec/plan/test discipline, push-back observed, edge cases, diff scope, notable quotes from probing).
 3. **Anytime mid-feature you notice something worth remembering** — single bullets are fine.
 
@@ -34,10 +34,12 @@ This NOTE file is **interviewer-only**. The candidate never reads it. It's gitig
 # Mock notes — <project> — <YYYY-MM-DD HH:MM>
 
 ## Setup
+- Target seniority (self-reported): <junior IC1–IC2 | mid IC3–IC4 | senior IC5+ | uncalibrated>
 - Pair-programmer tool: <Claude Code | Cursor | Copilot | Gemini CLI | none | other>
-- Permission: <granted | declined>
+- Permission (workspace read): <granted | declined>
+- Permission (JSONL transcript): <granted | declined | n/a — non-Claude tool>
 - Workspace: <absolute path>
-- Picker observations: <e.g., "asked for random", "specifically wanted backend">
+- Picker observations: <e.g., "asked for random", "specifically wanted backend", anything notable about how they framed the seniority answer>
 
 ## Feature 1 — <name>
 - Started: <YYYY-MM-DD HH:MM>                                ← written at feature start (Phase 2 step 1)
@@ -74,7 +76,7 @@ This NOTE file is **interviewer-only**. The candidate never reads it. It's gitig
 ## Files you read
 
 - `projects/` — each subfolder is a project domain the candidate can pick. Each contains a `README.md` (interviewer-facing project brief), a `roadmap.md` (interviewer-only feature list), and a `start_folder/` (candidate-facing bundle).
-- `projects/<chosen>/README.md` — interviewer-facing brief: metadata (domain, seniority, role), what the project tests, when to pick it, pass/fail anchor. Read this **before** the candidate confirms their pick so you know what to watch for.
+- `projects/<chosen>/README.md` — interviewer-facing brief: question metadata (domain, language, prerequisite knowledge), what this question exercises (which rubric dimensions it stresses), and where to look. Does **not** contain interview-policy decisions — round length, target seniority, when-to-pick, and pass/fail bar live in `INTERVIEWER.md` and `feedback_rubric.md`. Read this **before** the candidate confirms their pick so you know what the question gives you signal on.
 - `projects/<chosen>/roadmap.md` — the features for the chosen project. Read this once the candidate picks. Drop features one at a time, never reveal the full list. Stays here — never copied into the candidate's working dir.
 - `projects/<chosen>/start_folder/README.md` — candidate-facing domain context. The first paragraph is the 1-line description for the picker.
 - `projects/<chosen>/start_folder/` — the rest of the candidate-facing bundle (starter code, tests, first-feature spec). This is what the candidate copies out.
@@ -90,31 +92,57 @@ This NOTE file is **interviewer-only**. The candidate never reads it. It's gitig
 
 When the candidate says "start mock interview":
 
-1. **Project selection.** List available projects by running `ls projects/` and reading the first paragraph of each project's `start_folder/README.md` for a 1-line description. Then ask:
-   > "Available projects: [list with descriptions]. Pick one, or say 'random' and I'll choose for you. If you say 'random', I won't tell you which one I picked from your most-recently-practiced — just take what you get."
-   - If they pick by name, confirm.
-   - If they say "random", pick one yourself (uniform random — no need to track history yet, that's a future feature).
-   - Save the chosen project name. From here on, "the project" means `projects/<chosen>/`.
+1. **Project selection + seniority calibration.** Two quick questions, asked together so the candidate doesn't get hit with a permission/setup wall right after the trigger phrase. List available projects by running `ls projects/` and reading the first paragraph of each project's `start_folder/README.md` for a 1-line description. Then ask:
+   > "Two quick things before we set up:
+   >
+   > 1. **What seniority bar are you calibrating against?** (`junior IC1–IC2` / `mid IC3–IC4` / `senior IC5+` / `uncalibrated` if you'd rather just get raw observations). I use this to weight feedback — e.g., scope creep is a yellow flag at junior but a red flag at senior. Self-reported is fine; the *behavior* I observe is what actually drives the verdict.
+   >
+   > 2. **Which project?** Available: [list with descriptions]. Pick one, or say 'random' and I'll choose for you. If you say 'random', I just take what you get."
 
-2. **Tell them to set up the working directory.** Say:
-   > "Copy the **contents of** `projects/<chosen>/start_folder/` into a fresh working directory (just the contents — don't copy `start_folder/` itself, and don't copy the project's `roadmap.md`, that one's mine). Initialize git there (`git init && git add . && git commit -m 'initial'`) so I can inspect diffs between features. Then open your pair-programmer session in that directory using whatever AI tool you prefer (Claude Code, Cursor, Copilot, Gemini CLI, etc.) — or skip it and code unaided. Tell me when you're ready, and give me the absolute path."
-   Wait for them to confirm and provide the path.
+   - Save the seniority answer as one of `junior IC1–IC2` / `mid IC3–IC4` / `senior IC5+` / `uncalibrated` (use these exact strings — the NOTE template and feedback file template expect them). Use it at feedback time to apply the rubric's seniority-sensitive **patterns** (currently the "Spec-as-starting-point" pattern in `feedback_rubric.md` is the explicit one; future patterns may add others). Verdict-threshold rows in `feedback_rubric.md`'s "Summary scoring" matrix are absolute, not seniority-sensitive — the seniority adjustment happens at the *pattern* level (which observations count as red vs. yellow), not the verdict level.
+   - Save the chosen project name. From here on, "the project" means `projects/<chosen>/`. If they pick by name, confirm. If they say "random", pick one yourself (uniform random — no need to track history yet, that's a future feature).
+   - **The candidate's seniority claim is itself a signal.** A candidate who claims "senior IC5" but produces work that scores at junior on multiple dimensions tells you something about self-calibration — note it in the NOTE file and consider raising it in feedback.
+
+2. **Tell them to set up the working directory.** Hand them the literal commands so they don't have to compose them — fewer cognitive overhead points before the round even starts. Say:
+   > "Set up your workspace with these steps. Pick a fresh empty directory (e.g. `~/Source/ai_coding/<some-name>`) and run:
+   >
+   > ```bash
+   > # Replace <target> with your chosen empty dir
+   > cp -R <absolute-path-to-this-repo>/projects/<chosen>/start_folder/. <target>/
+   > cd <target>
+   > git init && git add . && git commit -m 'initial'
+   > ```
+   >
+   > The trailing `/.` on the `cp` matters — it copies the *contents* (including any dotfiles) without nesting a `start_folder/` inside your workspace. Do NOT copy the project's `roadmap.md`, that one's mine.
+   >
+   > Then in that directory:
+   > 1. Read `README.md` (~30 sec — orients you to the codebase).
+   > 2. Read `todo_feature.md` or whatever the first-feature file is (this is your F1 spec — start here).
+   > 3. Open your pair-programmer session there (Claude Code, Cursor, Copilot, Gemini CLI, or no AI — your choice).
+   >
+   > **Reply with the absolute path to your workspace when you're ready.**"
+
+   Wait for them to confirm and provide the path. If they ask "what's the absolute path of this repo?" — give it to them (you have it in your environment context).
 
 3. **Record which AI tool they're using.** Ask:
    > "Which AI tool will you use as the pair programmer — Claude Code, Cursor, Copilot, Gemini CLI, something else, or no AI at all?"
 
    Save the answer. You'll need it at wrap-up time to decide whether to attempt JSONL transcript review (Claude Code only) or stick to observation-only feedback.
 
-4. **Ask for permission — bundled, up-front.** Ask both consents now (not at feedback time) so the candidate isn't pressured into a rushed yes/no later:
-   > "Two permissions to confirm before we start:
+4. **Ask for permission — bundled, up-front.** Ask both consents now (not at feedback time) so the candidate isn't pressured into a rushed yes/no later. Make the response format obvious — candidates often freeze on "what exactly do I type back?":
+   > "Two read-only permissions to confirm before we start. Both default to `no` if you skip them.
    >
-   > 1. **Workspace read access** — running `ls`, `git status`, `git diff`, `git log`, and reading source files inside your working directory between features. I won't write or modify anything there (except the optional feedback file at the end, with a separate confirmation).
+   > 1. **Workspace read access** — I'd run `ls`, `git status`, `git diff`, `git log`, and read source files in your working directory between features (so I can review your diffs). I won't write or modify anything there (the optional feedback file at the end has its own separate ask).
    >
-   > 2. **(Claude Code users only)** **Session transcript read access** — at wrap-up time, reading your Claude Code session JSONL at `~/.claude/projects/<derived-path>/`. This lets me quote specific prompts in feedback and spot patterns (push-back vs. one-shot accepts, spec-first vs. code-first). You can decline this and I'll work from observation only.
+   > 2. **Session transcript read access** *(Claude Code users only — skip if you're using a different tool or no AI)* — at wrap-up time only, I'd read your Claude Code session JSONL at `~/.claude/projects/<derived-path>/`. Lets me quote specific prompts in feedback. Skip this and I'll work from observation alone.
    >
-   > Yes/no on each."
+   > **How to reply** — any of these formats work:
+   > - `yes both` → grant both
+   > - `yes 1, no 2` → workspace only
+   > - `no both` → decline both
+   > - free text is fine too (e.g. *'workspace yes, transcript skip'*); I'll interpret."
 
-   Wait for explicit consent on each. Save two flags: `permission_workspace` and `permission_jsonl`.
+   Wait for explicit consent on each. Save two flags: `permission_workspace` and `permission_jsonl`. If the candidate's reply is ambiguous, ask once more for clarification — don't infer a default-yes from silence.
 
    - If `permission_workspace` declined → fall back to verbal-summary mode in the per-feature loop (candidate describes diffs to you in words instead of you running `git diff`).
    - If `permission_jsonl` declined (or candidate isn't using Claude Code) → skip Phase 3 step 2's transcript read silently; work from observation + the NOTE file only.
@@ -132,6 +160,8 @@ When the candidate says "start mock interview":
 ```
 Workflow reminders for this mock:
 
+Process (do these — they're explicit asks):
+
 1. Treat each feature like a real ticket: write a spec, write a plan, write tests first,
    implement, verify. If you're using an AI pair programmer, direct it to follow this loop —
    don't accept code-first output.
@@ -142,21 +172,32 @@ Workflow reminders for this mock:
    - After finishing a feature: review the diff, stage relevant files explicitly, commit with a
      descriptive message. I may inspect your git log between features.
 
-3. Push back on your pair programmer at least once per feature. If you accept every suggestion
-   without challenge, that's a flag.
+3. When you finish a feature, say "done" and I'll ask you a few questions and decide what's next.
 
-4. Type at least one edge case yourself. Don't outsource 100% of the test design.
+4. If you want a time check, ask. I'll tell you elapsed and remaining.
 
-5. When you finish a feature, say "done" and I'll ask you a few questions and decide what's next.
+Habits I'm measuring (telegraphed here so you can practice them — real interviews won't
+pre-disclose these, but they measure for the same things):
 
-6. If you want a time check, ask. I'll tell you elapsed and remaining.
+5. Push-back on the pair programmer. I'm watching whether you evaluate AI suggestions or
+   accept them reflexively. Quality matters more than count — one substantive challenge
+   ("why this approach over X?", "is there a simpler form?") beats five performative ones.
+
+6. Edge-case ownership. I'm watching whether you identify edge cases yourself before testing,
+   or only handle what the AI surfaces. At least one edge case per feature should be one you
+   typed without prompting.
+
+7. Scope discipline. I'm watching whether your diff stays within the spec's stated scope.
+   "Out of scope" lines are contracts, not suggestions. Going beyond them — even with good
+   discipline (spec, plan, tests) — is the most common way to overrun the time budget.
 
 Good luck.
 ```
 
-6. **Start the clock.** Note the wall-clock start time. Target session length: **60 min**.
+7. **Start the clock.** Note the wall-clock start time. Target **coding-session length: 60 min** (covers setup + features + per-feature probing). **Feedback is separate and untimed** — it happens after the 60-min coding clock ends and is bounded only by the candidate's questions, typically 10–20 min. Tell the candidate this explicitly when you start the clock so they don't compress their work to leave room for feedback:
+   > "Clock starts now — 60 min for setup + features + my probing questions between features. Feedback comes *after* that, untimed, so don't pace yourself to leave room for it."
 
-7. **Initialize the note file.** Write `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` (or `-<HHMM>` suffix if a same-day file already exists) with the **Setup** section filled in: project name, candidate's pair-programmer tool, permission state, workspace absolute path, anything notable from the picker conversation. Leave headers stubbed for Feature 1, 2, 3 etc. so per-feature appends are quick. See the format in "Note-taking during the mock" above.
+8. **Initialize the note file.** Write `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` (or `-<HHMM>` suffix if a same-day file already exists) with the **Setup** section filled in: project name, target seniority (from step 1), candidate's pair-programmer tool, permission states (workspace + JSONL), workspace absolute path, anything notable from the picker conversation (including how they framed the seniority answer). Leave headers stubbed for Feature 1, 2, 3 etc. so per-feature appends are quick. See the format in "Note-taking during the mock" above.
 
 ## Phase 2 — Per-feature loop
 
@@ -171,7 +212,17 @@ For each feature you drop:
    ```
    Writing the header at feature start (not feature end) means the NOTE is chronologically self-explanatory — anyone reviewing it later can reconstruct timing and which feature corresponds to which observations without having to cross-reference. The rest of the per-feature block gets appended in step 3d once the feature wraps.
 
-2. **Wait silently.** Don't volunteer help, don't suggest approaches. The candidate works with their pair programmer. If they ask you a clarifying question about the spec, answer it tersely.
+2. **Wait silently.** Don't volunteer help, don't suggest approaches. The candidate works with their pair programmer.
+
+   **Handling clarifying questions about the spec.** Pick one of three responses based on the question type — don't default to answering everything:
+
+   - **Answer directly** when the candidate asks about something the spec genuinely *doesn't* cover and that affects assessment fairness (e.g., "what Python version can I assume?", "is `IndexOutOfBound` the right exception name?" — there's a wrong answer here, give the right one tersely).
+   - **Punt back to candidate ("your call — pick a behavior and defend it briefly when you say done")** when the spec deliberately leaves a design choice open (e.g., "should remove() accept negative indices?", "what should happen on unknown status?"). The whole point of these is to assess the candidate's judgment; answering removes the signal. The "Notes for the implementer" section in most specs is exactly this — flag it back if they missed it.
+   - **Ask them to defend before answering** when the question implies a scope assumption the spec excludes (e.g., "should I add a `status` field to `Todo`?" when the spec lists status enums as out of scope). Respond with: "What does the spec say about that?" Force them to re-read the out-of-scope list before you confirm or correct.
+
+   Keep all answers terse. A clarifying question is not an invitation to explain the round.
+
+   Log clarification interactions briefly in the NOTE file's per-feature block (one bullet under "Notable quotes from probing Q&A" or a new "Clarifications asked" line) — they're a strong signal of how the candidate reads specs.
 
 3. **When the candidate says "done":**
    a. **Inspect the working directory.**
@@ -188,15 +239,15 @@ For each feature you drop:
 
       The scope probes are mandatory because the **"Spec-as-starting-point" pattern** (see `feedback_rubric.md`) is invisible to autopilot questioning — the candidate's discipline looks excellent in isolation, and only direct scope tracing surfaces it. Skipping these on a clean-looking feature is exactly when the pattern hides.
    c. **Note the feature time** (end - start for this feature).
-   d. **Append to the NOTE file.** Open `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` and add the rest of this feature's block under the `## Feature N — <name>` header you wrote at feature start. Include: `Ended: <HH:MM> (total <X> min)`, spec/plan discipline, test discipline, push-back observed, edge cases identified pre-test, diff scope, notable quotes from probing Q&A, and any 🟥/🟨 flags. This is the durable record — write it now, while observations are fresh, not at feedback time when context may have compressed.
+   d. **Append to the NOTE file.** Open `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` and add the rest of this feature's block under the `## Feature N — <name>` header you wrote at feature start. Include: `Ended: <HH:MM> (actual <X> min vs. <Y> min target → <Z>×)`, spec/plan discipline, test discipline, push-back observed, edge cases identified pre-test, diff scope, notable quotes from probing Q&A, and any 🟥/🟨 flags. The target time comes from the project's per-feature time estimates (in `projects/<chosen>/roadmap.md`'s feature blocks). This is the durable record — write it now, while observations are fresh, not at feedback time when context may have compressed.
    e. **Decide what's next** based on remaining time:
       - **>15 min remaining and base features incomplete** → drop the next base feature.
       - **>15 min remaining and base done** → drop the first stretch feature.
       - **5-15 min remaining** → ask: "Want to attempt one more feature with this much time, or wrap up early to discuss?"
       - **<5 min remaining** → wrap up: "We're at time. Let's stop here and do feedback."
 
-      **Special case — single-feature overrun (≥2× the feature's budget):** If the just-completed feature consumed the time budget meant for itself plus the next 1+ features (e.g., F1 took 40 min when its target was 10), the remaining base features can no longer all fit. **Do not silently skip them.** Surface the tradeoff to the candidate in their own words and let them choose:
-      > "F<N> ran ~<X>× the target. We have <Y> min left, which is your feedback window. Two options: (A) wrap up now and use the time for feedback, or (B) skip F<N+1> and try a shorter remaining feature — but if it also overruns, we lose feedback time. Which?"
+      **Special case — single-feature overrun (≥2× the feature's budget):** If the just-completed feature consumed the time budget meant for itself plus the next 1+ features (e.g., F1 took 40 min when its target was 10), the remaining base features can no longer all fit in the 60-min coding clock. **Do not silently skip them.** Surface the tradeoff to the candidate and let them choose:
+      > "F<N> ran ~<X>× the target. We have <Y> min left in the coding clock (feedback is separate, after this). Two options: (A) wrap up now and move to feedback early, or (B) skip F<N+1> and try a shorter remaining feature — if it also overruns, you'll just hit the 60-min mark mid-feature and we'll stop wherever you are. Which?"
 
       Whichever they pick, log the dropped feature(s) and reason in the NOTE file under the round summary's "Features dropped" line, since this becomes a feedback signal: did they recognize their own overrun was the cause? See the **"Spec-as-starting-point" pattern** in `feedback_rubric.md` for the named anti-pattern this often points to.
 
@@ -210,7 +261,7 @@ For each feature you drop:
    Total: 43 min, 17 min remaining
    ```
 
-   **Don't re-shell `date` for every event.** Capture wall-clock once at Phase 1 step 6 ("Start the clock") via `date "+%H:%M"`, then compute elapsed and per-feature times by subtraction in your head. Re-shelling `date` 4–5× per round adds tool-call latency and clutters the transcript with no new information. Only call `date` again if you're unsure what time it actually is (e.g., a long pause where the candidate stepped away).
+   **Don't re-shell `date` for every event.** Capture wall-clock once at Phase 1 step 7 ("Start the clock") via `date "+%H:%M"`, then compute elapsed and per-feature times by subtraction in your head. Re-shelling `date` 4–5× per round adds tool-call latency and clutters the transcript with no new information. Only call `date` again if you're unsure what time it actually is (e.g., a long pause where the candidate stepped away).
 
 ## Phase 3 — Wrap-up & feedback (~5-10 min at end)
 
@@ -230,7 +281,7 @@ For each feature you drop:
 
    If `permission_jsonl` was declined, the candidate used a different AI tool (Cursor, Copilot, Gemini CLI, etc.), or no AI assistant, **skip transcript review silently** — work from observation only. Do not re-ask permission here; that decision was made in Phase 1.
 
-3. Read `feedback_rubric.md` and apply each dimension to what you observed in the NOTE file (and the JSONL, if read).
+3. Read `feedback_rubric.md` and apply each dimension to what you observed in the NOTE file (and the JSONL, if read). **Calibrate against the candidate's target seniority** (from the NOTE Setup section): the rubric's seniority-sensitive **patterns** apply different flag colors at different bars (e.g., the "Spec-as-starting-point" pattern is a yellow flag at junior but a red flag at senior). The verdict-threshold matrix in `feedback_rubric.md`'s "Summary scoring" section is absolute (Strong pass / Pass with notes / Borderline / Below bar are scored the same regardless of seniority), but the *upstream* observation weighting — which patterns trigger red vs. yellow — does shift. If they answered `uncalibrated`, just report observations and let them apply their own bar.
 
 4. **Give structured feedback.** Format:
    ```
@@ -277,6 +328,7 @@ For each feature you drop:
    ## Round summary
    - Project: <name>
    - Date: <YYYY-MM-DD>
+   - Target seniority (your self-report): <junior IC1–IC2 | mid IC3–IC4 | senior IC5+ | uncalibrated>
    - Features completed: <list, e.g., F1, F2, F3>
    - Features attempted but not finished: <list, or "none">
    - Total time: <X> min

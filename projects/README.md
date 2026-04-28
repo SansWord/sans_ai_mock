@@ -6,7 +6,7 @@ This folder contains the project domains the interviewer can pick from when runn
 
 ```
 projects/<project-name>/
-├── README.md                 # interviewer-facing — what this project tests, metadata, pass/fail anchor
+├── README.md                 # interviewer-facing — question metadata, what it exercises, where to look
 ├── roadmap.md                # interviewer-only — feature list, spoilers
 ├── NOTE-<YYYY-MM-DD>.md      # interviewer scratch notes per mock run (gitignored, generated at runtime)
 └── start_folder/             # everything the candidate copies into their workspace
@@ -19,7 +19,7 @@ projects/<project-name>/
 `NOTE-<YYYY-MM-DD>.md` files appear automatically when the interviewer runs a mock — they're durable observation records that survive context compaction during the round. They're gitignored (`projects/*/NOTE-*.md`) so per-mock notes stay local and don't pollute the kit's commit history. They're not part of the project contract; contributors don't author them.
 
 There are **two READMEs per project**, deliberately:
-- `projects/<name>/README.md` — interviewer-facing. What the project is designed to test, target seniority/role, when to pick this project, pass/fail anchor.
+- `projects/<name>/README.md` — interviewer-facing. Question metadata (domain, language, prerequisite knowledge), what this question exercises (which rubric dimensions it stresses, with concrete per-feature signals), and where to look. Does NOT contain interview-policy decisions — round length, target seniority, when-to-pick, and pass/fail bar live in `INTERVIEWER.md` and `feedback_rubric.md`, applied uniformly across questions.
 - `projects/<name>/start_folder/README.md` — candidate-facing. Domain orientation and how to use the starter code.
 
 ## How a mock uses this folder
@@ -36,8 +36,8 @@ When the candidate says "start mock interview", the interviewer:
 
 | File | Purpose | Required? |
 |------|---------|-----------|
-| `README.md` | Interviewer-facing project brief. Should cover: a metadata table (domain, language, target seniority, target role, round length), what this project tests (concrete behaviors to watch for), when to pick / not pick this project, and a pass/fail anchor. | ✅ |
-| `roadmap.md` | Interviewer-only feature list. 3 base + 1-2 stretch features, each with a `### Spec` block ready to copy and a "what to look for" note. Lives outside `start_folder/` so the candidate never sees it. | ✅ |
+| `README.md` | Interviewer-facing project brief, **scoped to the question itself** — not interview policy. Should cover: a metadata table (domain, language, prerequisite domain knowledge), what this question exercises (which rubric dimensions it stresses, with concrete per-feature signals), and where to look. Does NOT cover round length, target seniority, when-to-pick, or pass/fail bar — those are interviewer-protocol concerns owned by `INTERVIEWER.md` and `feedback_rubric.md`, applied uniformly across questions. | ✅ |
+| `roadmap.md` | Interviewer-only feature list. 3 base + 1-2 stretch features, each with a `### Spec` block ready to copy and a "what to look for" note. Includes per-feature time estimates (a property of the question). Lives outside `start_folder/` so the candidate never sees it. | ✅ |
 | `start_folder/` | The candidate-facing bundle (see below). | ✅ |
 
 `projects/<name>/start_folder/` contains:
