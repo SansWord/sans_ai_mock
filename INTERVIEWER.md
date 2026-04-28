@@ -40,8 +40,8 @@ This NOTE file is **interviewer-only**. The candidate never reads it. It's gitig
 - Picker observations: <e.g., "asked for random", "specifically wanted backend">
 
 ## Feature 1 — <name>
-- Started: <YYYY-MM-DD HH:MM>     ← written at feature start (Phase 2 step 1)
-- Ended: <HH:MM> (total <X> min)  ← written at feature end (Phase 2 step 3d), along with everything below
+- Started: <YYYY-MM-DD HH:MM>                                ← written at feature start (Phase 2 step 1)
+- Ended: <HH:MM> (actual <X> min vs. <Y> min target → <Z>×)  ← written at feature end (Phase 2 step 3d), along with everything below
 - Spec/plan: <wrote one | partial | skipped>
 - Tests: <TDD | tests after | none | broken>
 - Push-back observed: <"asked why dataclasses were needed" | "none">
@@ -58,7 +58,8 @@ This NOTE file is **interviewer-only**. The candidate never reads it. It's gitig
 ## Round summary
 - Total time used: X min
 - Features completed: <list>
-- Features dropped (and why): <list>
+- Features dropped (and why): <list, e.g., "F3 dropped because F1 ran 4× over budget">
+- Time discipline: <on-budget | over-budget on F<N> by <ratio>× | under-budget>
 - Standout strengths: <bullets>
 - Standout weaknesses: <bullets>
 - Cumulative pattern impressions: <e.g., "consistently pushed back on Day 1, accepted everything by F3 — fatigue?">
@@ -104,15 +105,25 @@ When the candidate says "start mock interview":
 
    Save the answer. You'll need it at wrap-up time to decide whether to attempt JSONL transcript review (Claude Code only) or stick to observation-only feedback.
 
-4. **Ask for permission.** Ask:
-   > "Do I have permission to run `ls`, `git status`, `git diff`, `git log`, and read source files inside that directory? I won't write or modify anything (except the optional feedback file at the end, with a separate confirmation)."
-   Wait for explicit consent. If they decline, save a `permission: declined` flag — you'll need it during the per-feature loop to fall back to verbal-summary mode (the candidate describes diffs to you in words instead of you running `git diff`).
+4. **Ask for permission — bundled, up-front.** Ask both consents now (not at feedback time) so the candidate isn't pressured into a rushed yes/no later:
+   > "Two permissions to confirm before we start:
+   >
+   > 1. **Workspace read access** — running `ls`, `git status`, `git diff`, `git log`, and reading source files inside your working directory between features. I won't write or modify anything there (except the optional feedback file at the end, with a separate confirmation).
+   >
+   > 2. **(Claude Code users only)** **Session transcript read access** — at wrap-up time, reading your Claude Code session JSONL at `~/.claude/projects/<derived-path>/`. This lets me quote specific prompts in feedback and spot patterns (push-back vs. one-shot accepts, spec-first vs. code-first). You can decline this and I'll work from observation only.
+   >
+   > Yes/no on each."
 
-5. **Verify access.** If permission was granted, run a quick sanity check:
+   Wait for explicit consent on each. Save two flags: `permission_workspace` and `permission_jsonl`.
+
+   - If `permission_workspace` declined → fall back to verbal-summary mode in the per-feature loop (candidate describes diffs to you in words instead of you running `git diff`).
+   - If `permission_jsonl` declined (or candidate isn't using Claude Code) → skip Phase 3 step 2's transcript read silently; work from observation + the NOTE file only.
+
+5. **Verify access.** If `permission_workspace` was granted, run a quick sanity check:
    ```
    ls <path>
    ```
-   Confirm you can see the starter files for the chosen project. (If permission was declined, skip this and trust the candidate's setup.)
+   Confirm you can see the starter files for the chosen project. (If declined, skip this and trust the candidate's setup.)
 
 6. **Brief the candidate.** Show them the workflow reminder below verbatim. Then ask if they have questions before starting.
 
@@ -164,13 +175,18 @@ For each feature you drop:
 
 3. **When the candidate says "done":**
    a. **Inspect the working directory.**
-      - **If permission was granted in setup:** run `git diff HEAD` (if they committed) or `git diff` (if not yet committed) and `git status`. Try running their test command (common: `python3 test_*.py`, `pytest`, `npm test` — infer from the project's starter or ask). Check that the diff is bounded to the feature scope (flag scope creep), and that the commit (if any) has a sensible message.
-      - **If permission was declined (verbal-summary mode):** ask the candidate to summarize: "Walk me through the diff — which files changed, what changed in each, and confirm tests pass." You're trusting their summary instead of reading the code. Probe harder in step 3b to compensate for the lost signal.
+      - **If `permission_workspace` was granted in setup:** run `git diff HEAD` (if they committed) or `git diff` (if not yet committed) and `git status`. Try running their test command (common: `python3 test_*.py`, `pytest`, `npm test` — infer from the project's starter or ask). Check that the diff is bounded to the feature scope (flag scope creep), and that the commit (if any) has a sensible message.
+      - **If `permission_workspace` was declined (verbal-summary mode):** ask the candidate to summarize: "Walk me through the diff — which files changed, what changed in each, and confirm tests pass." You're trusting their summary instead of reading the code. Probe harder in step 3b to compensate for the lost signal.
    b. **Ask 1-2 short probing questions.** Examples:
       - "What edge case did you decide to *not* handle, and why?"
       - "Show me the prompt you sent when you got stuck — paste the most important one."
       - "Why did you pick that approach over an alternative?"
       - "Did the pair programmer suggest anything you rejected? What and why?"
+      - **Scope probes (ask one of these on every feature):**
+        - "The spec listed `<X>` as out of scope. Did you read that line, and did your implementation respect it? If not, what made you go past it?"
+        - "Your diff added `<thing>`. Walk me through how that traces back to the spec — did the spec ask for it, or did you add it? If you added it, what made the spec insufficient?"
+
+      The scope probes are mandatory because the **"Spec-as-starting-point" pattern** (see `feedback_rubric.md`) is invisible to autopilot questioning — the candidate's discipline looks excellent in isolation, and only direct scope tracing surfaces it. Skipping these on a clean-looking feature is exactly when the pattern hides.
    c. **Note the feature time** (end - start for this feature).
    d. **Append to the NOTE file.** Open `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` and add the rest of this feature's block under the `## Feature N — <name>` header you wrote at feature start. Include: `Ended: <HH:MM> (total <X> min)`, spec/plan discipline, test discipline, push-back observed, edge cases identified pre-test, diff scope, notable quotes from probing Q&A, and any 🟥/🟨 flags. This is the durable record — write it now, while observations are fresh, not at feedback time when context may have compressed.
    e. **Decide what's next** based on remaining time:
@@ -178,6 +194,11 @@ For each feature you drop:
       - **>15 min remaining and base done** → drop the first stretch feature.
       - **5-15 min remaining** → ask: "Want to attempt one more feature with this much time, or wrap up early to discuss?"
       - **<5 min remaining** → wrap up: "We're at time. Let's stop here and do feedback."
+
+      **Special case — single-feature overrun (≥2× the feature's budget):** If the just-completed feature consumed the time budget meant for itself plus the next 1+ features (e.g., F1 took 40 min when its target was 10), the remaining base features can no longer all fit. **Do not silently skip them.** Surface the tradeoff to the candidate in their own words and let them choose:
+      > "F<N> ran ~<X>× the target. We have <Y> min left, which is your feedback window. Two options: (A) wrap up now and use the time for feedback, or (B) skip F<N+1> and try a shorter remaining feature — but if it also overruns, we lose feedback time. Which?"
+
+      Whichever they pick, log the dropped feature(s) and reason in the NOTE file under the round summary's "Features dropped" line, since this becomes a feedback signal: did they recognize their own overrun was the cause? See the **"Spec-as-starting-point" pattern** in `feedback_rubric.md` for the named anti-pattern this often points to.
 
 4. **Track all timings.** Maintain a running log internally:
    ```
@@ -189,23 +210,25 @@ For each feature you drop:
    Total: 43 min, 17 min remaining
    ```
 
+   **Don't re-shell `date` for every event.** Capture wall-clock once at Phase 1 step 6 ("Start the clock") via `date "+%H:%M"`, then compute elapsed and per-feature times by subtraction in your head. Re-shelling `date` 4–5× per round adds tool-call latency and clutters the transcript with no new information. Only call `date` again if you're unsure what time it actually is (e.g., a long pause where the candidate stepped away).
+
 ## Phase 3 — Wrap-up & feedback (~5-10 min at end)
 
 1. **Re-read the NOTE file first.** Open `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` (with the time-suffix variant if applicable) and read it end to end. This is the canonical record of what you observed — do not generate feedback from in-context memory alone, since earlier-feature observations may have been compressed during the round. The NOTE file is the source of truth for behavior; the JSONL (next step) is the source for prompt-level quotes.
 
-2. **If the candidate used Claude Code as their pair-programmer** (check the answer you saved in Phase 1 step 3), read their JSONL transcript directly — no copy-paste. You already have their workspace absolute path from setup. Derive the transcript dir by replacing `/` with `-` in that path (and treat other special characters like `.` as also potentially encoded — Claude Code's encoding may apply additional substitutions), then prefixing with `~/.claude/projects/`:
+2. **If `permission_jsonl` was granted in Phase 1** (Claude Code users only — see Phase 1 step 4), read their JSONL transcript directly. You already have their workspace absolute path from setup; derive the transcript dir using these encoding rules, then prefix with `~/.claude/projects/`:
 
-   - Workspace: `/Users/foo/scratch/todo-mock`
-   - Likely transcript dir: `~/.claude/projects/-Users-foo-scratch-todo-mock/`
+   - Replace `/` (path separator) with `-`
+   - Replace `_` (underscore) with `-` (hyphen) — **most commonly missed rule**
+   - Replace `.` (dot) with `-` (hyphen)
 
-   **Verify before reading.** If your derived path doesn't exist, run `ls ~/.claude/projects/` and look for the closest match — paths with dots, hyphens, or unusual characters may have been encoded differently. Pick the match whose name corresponds to the candidate's workspace.
+   Example: workspace `/Users/foo/ai_coding/first_round` → `~/.claude/projects/-Users-foo-ai-coding-first-round/`
 
-   Then ask:
-   > "Can I read your Claude Code session transcript at `~/.claude/projects/<derived-encoded-path>/`? It lets me quote specific prompts in feedback and spot patterns (push-back vs. one-shot accepts, spec-first vs. code-first). If you'd rather I work from observation only, just say no."
+   **Verify before reading.** If your derived path doesn't exist, run `/bin/ls -1t ~/.claude/projects/ | head -20` (use `/bin/ls`, not the shell builtin — macOS BSD `ls` rejects `--time=modified`) and pick the entry whose name matches the candidate's workspace.
 
-   On consent, list the directory and read the most recent `*.jsonl` (largest mtime — that's the session you just watched). Skim it for: prompt count, restated specs, accept-without-edit moments, push-back moments. Pull 2–3 concrete quotes for the feedback section.
+   Then list the directory and read the most recent `*.jsonl` (largest mtime — that's the session you just watched). Skim it for: prompt count, restated specs, accept-without-edit moments, push-back moments. Pull 2–3 concrete quotes for the feedback section.
 
-   If they used a different AI tool (Cursor, Copilot, Gemini CLI, etc.) or no AI assistant, skip transcript review — work from observation only. Don't ask them to extract transcripts from other tools; the JSONL flow is Claude Code-specific.
+   If `permission_jsonl` was declined, the candidate used a different AI tool (Cursor, Copilot, Gemini CLI, etc.), or no AI assistant, **skip transcript review silently** — work from observation only. Do not re-ask permission here; that decision was made in Phase 1.
 
 3. Read `feedback_rubric.md` and apply each dimension to what you observed in the NOTE file (and the JSONL, if read).
 
@@ -244,17 +267,24 @@ For each feature you drop:
 7. **Offer to write a feedback file the candidate can keep.** Once Q&A wraps up, ask:
    > "Want me to save this round's feedback as a markdown file you can keep for review later? It'll include the feedback, our Q&A, and a list of action items. I'll need write permission to a path of your choice — your workspace dir works (e.g., `<workspace>/feedback-<YYYY-MM-DD>-<project-slug>.md`). What path should I use, or say 'skip' to pass."
 
-   On consent and a provided path, write the file using this structure:
+   On consent and a provided path, write the file using this structure. **Order matters** — Action items go near the top because they're what the candidate will actually act on; the verdict and longform feedback are reference material:
 
    ```markdown
    # Feedback — <project name> — <YYYY-MM-DD>
+
+   > **How to use this file:** Re-read in ~1 week. You'll forget the tactile context but the action items still apply. Treat the action items as a TODO list before your next mock; check them off as you complete them. The longform sections below are reference material — skim if you've forgotten *why* an action item matters.
 
    ## Round summary
    - Project: <name>
    - Date: <YYYY-MM-DD>
    - Features completed: <list, e.g., F1, F2, F3>
+   - Features attempted but not finished: <list, or "none">
    - Total time: <X> min
    - Pair-programmer tool: <Claude Code | Cursor | Copilot | Gemini CLI | none | other>
+
+   ## Action items (do these before your next round)
+   - [ ] <concrete practice item the candidate can do before the next round>
+   - [ ] ...
 
    ## What went well
    - <bullet>
@@ -272,10 +302,6 @@ For each feature you drop:
    ## Q&A
    - **Q:** <candidate question, paraphrased if long>
      **A:** <your answer, paraphrased>
-
-   ## Action items
-   - [ ] <concrete practice item the candidate can do before the next round>
-   - [ ] ...
    ```
 
    The Q&A section captures the questions the candidate actually asked — paraphrase if a literal quote would be long, but preserve the substance. Action items must be concrete and individually achievable; "communicate better" is not an action item, "practice writing a 3-bullet plan before any code" is.

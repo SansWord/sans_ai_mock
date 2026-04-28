@@ -16,18 +16,22 @@ Update `TodoList.list()` to accept an optional `status` parameter:
 
 The returned list should still be a copy (mutating it must not affect internal state, same as today).
 
-## Out of scope
+## Out of scope (do not implement — these have been considered and deliberately excluded)
 
-- Persistence
+If you find yourself adding any of the following, **stop**. Either remove the work or ask the interviewer to confirm the deviation before continuing.
+
+- Persistence (no save/load to disk)
 - Priority / due date / tags
-- Status enums or richer status types — strings are fine for now
+- **Status enums or richer status types** — strings are fine on the `list()` argument. Do **not** add a `status` field, attribute, or property to `Todo`. Do **not** add a `status=` constructor kwarg. The `completed` boolean stays as the only state on `Todo`.
 - Filtering by anything other than status
+- Validation of unknown status strings beyond what the spec requires (pick a behavior, document it, move on)
 
 ## Acceptance
 
 1. All existing tests still pass without modification.
 2. New behavior is covered by tests.
 3. The API change is backward-compatible — calling code that does `tl.list()` with no args continues to work.
+4. **The diff to `todo.py` is minimal.** No new attributes on `Todo`, no new constructor kwargs, no new exception types unless required to satisfy 1–3. If your diff adds any of those, you have either misread the spec or are working past it; stop and reconsider.
 
 ## Notes for the implementer
 

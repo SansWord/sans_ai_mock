@@ -29,13 +29,16 @@ Update `TodoList.list()` to accept an optional `status` parameter:
 
 The returned list should still be a copy.
 
-## Out of scope
-- Persistence, priority, due date, tags, status enums
+## Out of scope (do not implement — deliberately excluded)
+If you find yourself adding any of the following, stop and reconsider:
+- Persistence, priority, due date, tags
+- **Status enums or richer status types on `Todo`** — strings on the `list()` arg only. Do NOT add a `status` field/property/kwarg to `Todo`. The `completed` boolean stays the only state.
 
 ## Acceptance
 1. All existing tests still pass.
 2. New behavior covered by tests.
 3. API change is backward-compatible.
+4. **Diff to `todo.py` is minimal** — no new attributes on `Todo`, no new constructor kwargs, no new exception types unless required by 1–3.
 ```
 
 ### What to look for

@@ -84,6 +84,7 @@ For each dimension, pick: **Strong / OK / Weak**.
 - **"Over-prompted" pattern**: candidate writes 4-paragraph prompts for trivial asks. OK at junior level, slows them down at senior.
 - **"Silent partner" pattern**: candidate doesn't push back ever, even when the pair programmer over-engineers. Yellow flag.
 - **"Skip-the-tests" pattern**: claims tests would slow them down. Red flag.
+- **"Spec-as-starting-point" pattern**: candidate uses excellent process (spec, plan, TDD, push-back) on a scope larger than the given spec. Adds fields, methods, or surface area the spec didn't ask for, often invoking "future flexibility" or "more general later" as justification — directly contradicting an explicit "Out of scope" line. Distinguishing tell: artifacts and discipline look strong in isolation, but the diff exceeds minimum-viable. Often co-occurs with overrunning the time budget by 2–4×, which then cascades into dropped features. Yellow flag at junior level (process is right, scope calibration takes time); red flag at senior level (a senior IC must treat the spec as a contract, not a starting point). Typical interviewer probe: *"The spec listed X as out of scope. Did you read that line, and did your implementation respect it?"*
 
 ## Time efficiency notes
 
