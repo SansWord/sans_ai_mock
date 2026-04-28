@@ -97,3 +97,43 @@ These are deliberate, not accidental. Don't undo them without thinking hard abou
 - **Editing the interviewer protocol**: edit `INTERVIEWER.md`. Test by running a real mock afterward. Changes here apply to *all* projects — confirm the change makes sense across the project portfolio, not just one.
 - **Editing feedback dimensions**: edit `feedback_rubric.md`. Keep the same scoring matrix shape so the interviewer can apply it consistently. Seniority-sensitive patterns belong here, not in the protocol.
 - **Updating the meta-roadmap**: edit `roadmap.md` (root). This is the framework-level plan, not a single mock.
+
+## Documentation (`docs/`)
+
+When creating any new `docs/*.md` file, always add it to this list with a one-line description.
+
+- [`devlog.md`](docs/devlog.md) — session-by-session record of what was built and learned; update at end of each session
+
+## Versioning
+
+Three-part semver: `vX.Y.0` for main releases, `vX.Y.1` / `vX.Y.2` for follow-up sessions on the same version, `vX.Y.0-design` for design-only sessions (devlog entry only, no git tag). Git tags, devlog headings, and TL;DR anchors must always match. See global CLAUDE.md Project Conventions for the full rule.
+
+## "Ship it" shortcut
+
+When SansWord says **"ship it"** (or equivalent like "let's ship", "ship this"), run the lightweight release flow on the current changes:
+
+1. **Decide the version.** New feature / behavior change → bump minor (`vX.(Y+1).0`). Doc-only or follow-up to the current version → bump patch (`vX.Y.(Z+1)`). If unsure, ask.
+2. **Stage uncommitted work** — explicit file list (no `git add -A` / `git add .`). Confirm no secret-looking files snuck in (see GitHub Upload Safety below).
+3. **Update `docs/devlog.md`** — add the `vX.Y.Z` entry per the format in global CLAUDE.md (heading with timestamp from `git log` of the version commit, or current time if writing pre-commit; `**Review:**` line; `**What was built:**`, `**Key technical learnings:**`, optional `**Process learnings:**`). **Prepend a row** to the **TL;DR table** at the top with a one-line summary linking to the new section anchor (lowercase, strip punctuation except hyphens, spaces → hyphens).
+4. **Update `docs/` list in this CLAUDE.md** — if any new `docs/*.md` files were added, add them to the Documentation section above.
+5. **Cross off completed roadmap items** — in `roadmap.md` (top-level) backlog, strikethrough any items the new version completed.
+6. **Commit** — single commit. Message format: `vX.Y.Z: <title>` followed by a structured body (key changes grouped by area). Stage explicitly. Co-author trailer per global rules.
+7. **Tag** — annotated tag `git tag -a vX.Y.Z -m "vX.Y.Z — <title>"` at the new commit.
+8. **Verify** — `git status` (clean), `git log --oneline -3`, `git tag -l` (new tag present).
+
+This repo has no test runner or build step yet — when those land, add a `test/build verify` step before the commit. **Do not push automatically**; only push when explicitly asked. If any step fails, stop and report — don't paper over it.
+
+## End of Session
+
+Remind SansWord to update `docs/devlog.md` at the end of each session (format per global CLAUDE.md). When writing a new entry, also prepend a row to the **TL;DR table** at the top with a one-line summary of the new version, linking to its section anchor. Cross off any completed items in `roadmap.md` (top-level).
+
+## GitHub Upload Safety
+
+Before committing or pushing any file to GitHub, check for:
+- **Secrets, API keys, tokens, passwords** — none are expected in this repo, but verify on every commit. The `.claude/settings.local.json` file (gitignored) is the most likely accidental include.
+- **Real candidate observations / interview transcripts** — `projects/*/NOTE-*.md` is gitignored to prevent this. If you ever find yourself staging a NOTE file, stop and verify intent (the example `NOTE-2026-04-28.md` is the one exception, kept as a documentation example).
+- **Real candidate workspace paths** that reveal directory structure of contributors' machines — the example `NOTE-2026-04-28.md` references SansWord's path; that's intentional. New examples should use placeholder paths (`/Users/<you>/Source/...`) unless they're explicitly documenting a real session.
+- **Private personal information** beyond what's already public (name, email).
+- **Files not meant to be public** (`.env`, `*.pem`, `*.key`, `.DS_Store`).
+
+CLAUDE.md, README.md, INTERVIEWER.md, feedback_rubric.md, and the project content are all safe to commit — they contain no secrets.
