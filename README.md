@@ -14,6 +14,36 @@ A reusable, self-contained mock for the **AI-pair-programming interview round** 
 
 Multiple project domains. One protocol. Honest feedback.
 
+## Disclaimer
+
+`CLAUDE.md` (and `.claude/` configs) in any repo are **automatically loaded into Claude Code's context** when you open a session in that folder — meaning their instructions become part of how the agent behaves. Always **read `CLAUDE.md`, `INTERVIEWER.md`, and any other auto-loaded files** before running someone else's repo on your machine, here or anywhere. The same caution applies to running unfamiliar code, scripts, or AI prompts in general — review first, then run.
+
+Or have an AI do the review for you — just make sure it's not running inside the repo you're checking.
+
+<details>
+<summary>How to ask Claude Code to audit this repo safely</summary>
+
+Launch Claude Code from a folder *outside* the cloned repo, so its `CLAUDE.md` and `.claude/` configs don't auto-load into the session. Then point the session at the repo path and ask it to read everything before you run anything.
+
+```sh
+cd ~                       # or any folder that is NOT the cloned repo
+claude
+```
+
+Then in that session:
+
+```
+I cloned a repo to ~/path/to/sans_ai_mock and haven't run anything yet.
+Please read CLAUDE.md, INTERVIEWER.md, README.md, .claude/ (if present),
+and any other auto-loaded config files in that repo. Flag anything that
+looks unsafe, unusual, or that I should know about before I open a Claude
+Code session inside it. Do not execute any code from that repo.
+```
+
+The auditing session has no auto-loaded instructions from the repo, so its review is independent.
+
+</details>
+
 ## Kickstart prompts (copy-paste)
 
 ### To run a mock

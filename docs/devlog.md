@@ -6,6 +6,7 @@ A record of what was built and what was learned, especially around extending the
 
 | Version | What shipped |
 |---|---|
+| [v0.9.3](#v093--readme-disclaimer--ai-audit-recipe-2026-04-28-1716) | Add README "Disclaimer" section noting that `CLAUDE.md` and `.claude/` configs auto-load into Claude Code's context, plus a copy-paste `<details>` recipe for asking a fresh-context Claude Code session (launched from outside the cloned repo) to audit configs before running anything; drop two stale CLAUDE.md bullets that described `NOTE-2026-04-28.md` as a "committed example exception" (it was always gitignored) |
 | [v0.9.2](#v092--trigger-phrase-standardization--interviewer-bash-allowlist-2026-04-28-1632) | Standardize the mock-interview trigger phrase to a single canonical `start mock interview` (drop the dual "first-time" wording); add `.claude/settings.json` with a tight read-only Bash allowlist (`ls`, `git status,diff,log,show`, `cat`, `date`, `wc`, `jq`) so per-feature inspection no longer prompts |
 | [v0.9.1](#v091--devlog--claudemd-conventions-2026-04-28-1621) | Set up `docs/devlog.md` with TL;DR + learning-tags table; add documentation list, versioning rule, end-of-session reminder, tailored "ship it" shortcut, and GitHub upload safety section to CLAUDE.md |
 | [v0.9.0](#v090--first-end-to-end-mock--comprehensive-post-mortem-fixes-2026-04-28-1615) | Battle-tested with first 60-min mock; folded findings into protocol/rubric/projects; new "Spec-as-starting-point" pattern; seniority calibration; container/plug-in architecture documented; HANDOFF.md retired and absorbed into CLAUDE.md |
@@ -20,6 +21,25 @@ A record of what was built and what was learned, especially around extending the
 | `[note]` | Useful context, well-documented — good to have written down but you'd find it in the docs |
 | `[insight]` | Non-obvious; meaningfully changes how you design or debug something |
 | `[gotcha]` | A specific trap that bit you; high risk of biting you again — bookmark this |
+
+---
+
+## v0.9.3 — README disclaimer + AI-audit recipe (2026-04-28 17:16)
+
+**Review:** not yet
+
+**What was built:**
+- **README "Disclaimer" section** — explicit notice that `CLAUDE.md` and `.claude/` configs in any repo auto-load into Claude Code's context (their instructions become part of how the agent behaves), with a directive to read `CLAUDE.md`, `INTERVIEWER.md`, and any other auto-loaded files before running someone else's repo. Generalizes to "review unfamiliar code, scripts, or AI prompts before running them."
+- **`<details>` "How to ask Claude Code to audit this repo safely" block** — copy-paste recipe: launch `claude` from a folder *outside* the cloned repo (so the repo's own configs don't auto-load), then point that session at the repo path with a prompt that asks for a read-only audit covering hooks/auto-run shell, exfiltration vectors, prompt-injection content, and unexpected file writes. Because the auditing session has no auto-loaded instructions from the audited repo, its review is independent.
+- **CLAUDE.md "GitHub Upload Safety" cleanup** — removed two bullets that described `projects/todo-list/NOTE-2026-04-28.md` as a "committed example exception." The file was never committed (matched by the existing `.gitignore` rule `projects/*/NOTE-*.md`). Bullets now keep only the general guidance: don't stage NOTE files, use placeholder paths in examples.
+
+**Key technical learnings:**
+- `[insight]` Auto-loaded agent configs are a real-but-quiet supply-chain surface. `CLAUDE.md` and `.claude/settings.json` (and any `.claude/hooks/*` if present) shape an agent's behavior the moment a session opens in that folder — invisibly to anyone who hasn't read them. Putting a disclaimer at the top of the README, plus a concrete "how to audit" recipe, treats this honestly instead of hand-waving "trust the repo."
+- `[insight]` The "audit from outside the cloned repo" pattern is the key trick. A subagent dispatched while `cwd` is the audited repo would still inherit the very `CLAUDE.md` we want to audit. Launching from `~` (or any other folder) and pointing the session at the path keeps the auditor's context clean.
+
+**Process learnings:**
+- `[gotcha]` Eating our own dog food: ran the recipe with a fresh-context subagent against this repo before shipping. Verdict came back SAFE WITH NOTES — but it confidently described `NOTE-2026-04-28.md` as a "committed example" when it was always gitignored and untracked. The auditor was faithfully repeating a stale claim from CLAUDE.md, not checking `git ls-files`. Lesson: AI audits read docs as ground truth; cross-check any "X is committed / X is shipped" claim against `git ls-files` / `git log` before acting. The audit caught no real risk but did surface this doc-vs-reality drift, which is exactly the kind of thing the disclaimer ecosystem is supposed to surface.
+- `[note]` Patch versions are the right home for doc/safety polish — no behavior change, no new feature, just clearer + more honest framing.
 
 ---
 

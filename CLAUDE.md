@@ -131,8 +131,8 @@ Remind SansWord to update `docs/devlog.md` at the end of each session (format pe
 
 Before committing or pushing any file to GitHub, check for:
 - **Secrets, API keys, tokens, passwords** — none are expected in this repo, but verify on every commit. The `.claude/settings.local.json` file (gitignored) is the most likely accidental include.
-- **Real candidate observations / interview transcripts** — `projects/*/NOTE-*.md` is gitignored to prevent this. If you ever find yourself staging a NOTE file, stop and verify intent (the example `NOTE-2026-04-28.md` is the one exception, kept as a documentation example).
-- **Real candidate workspace paths** that reveal directory structure of contributors' machines — the example `NOTE-2026-04-28.md` references SansWord's path; that's intentional. New examples should use placeholder paths (`/Users/<you>/Source/...`) unless they're explicitly documenting a real session.
+- **Real candidate observations / interview transcripts** — `projects/*/NOTE-*.md` is gitignored to prevent this. If you ever find yourself staging a NOTE file, stop — they're meant to stay local.
+- **Real candidate workspace paths** that reveal directory structure of contributors' machines. Any example or doc should use placeholder paths (`/Users/<you>/Source/...`).
 - **Private personal information** beyond what's already public (name, email).
 - **Files not meant to be public** (`.env`, `*.pem`, `*.key`, `.DS_Store`).
 
