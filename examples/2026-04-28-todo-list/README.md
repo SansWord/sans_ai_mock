@@ -39,7 +39,11 @@ Notes:
 - **Pricing assumed:** Opus 4 family — input $15 / output $75 / cache_write_1h $30 / cache_read $1.50 per MTok. Sonnet 4 family — input $3 / output $15 / cache_write_1h $6 / cache_read $0.30 per MTok. Verify current rates on Anthropic's pricing page before using these as a budget.
 - **Cache reads dominate (~50% of cost).** Mostly the system prompts + protocol files being re-read each turn. This is the cheap-token side of the ledger; without prompt caching, the same usage would cost roughly 10x more on the read path.
 - **This is one real candidate's run.** It included F1 over-engineering (43 min on a 10-min-budgeted feature, per the feedback file). A tighter run would cost less; a longer or more iterative run would cost more.
-- **Claude Code subscription vs raw API:** the dollar figures above are API-equivalent. On a Claude Code Pro or Max plan, usage is charged against your plan's quota rather than billed directly. A single 60-min mock will dent a Pro day's budget but is comfortable for Max plans.
+- **Claude Code subscription vs raw API:** the dollar figures above are API-equivalent. On a Claude Code Pro or Max plan, usage is charged against your plan's quota rather than billed directly. Rough fit:
+  - **Pro ($20/mo)** — tight; a single 60-min mock will likely exhaust your 5-hour rolling window before the round finishes. Undersized for serious mock practice.
+  - **Max 5x ($100/mo)** — comfortable. ~1 mock per 5-hour window with headroom.
+  - **Max 20x ($200/mo)** — plenty of room; multiple mocks per 5-hour window.
+  - Anthropic does not publish exact quotas and adjusts them periodically — these are best-effort estimates from this run, not commitments.
 - **Numbers measured by parsing the session JSONLs at `~/.claude/projects/<encoded-path>/`** (deduped by `message.id` to avoid counting the same assistant turn twice).
 
 ## Caveats

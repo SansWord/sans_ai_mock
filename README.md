@@ -53,9 +53,20 @@ Two sessions run in parallel — the interviewer side runs in Claude Code (the m
 
 The interviewer picks a project (or asks you to pick), drops feature specs one at a time, observes your work between features, and gives structured feedback at the end. The pair programmer is your hands-on AI coder for the duration.
 
-Want to see what the end-of-mock feedback actually looks like before committing 60 minutes? See [`examples/2026-04-28-todo-list/`](examples/2026-04-28-todo-list/) — a real run on `todo-list` with the candidate's spec/plan files, final code, and the feedback file the interviewer produced. The example folder also includes a **cost breakdown**: the run was roughly **$19 in API usage** during the 60-min coding window (~$26 for the full experience including setup and Phase 3 feedback delivery), interviewer + candidate sides combined, mostly on Opus 4.7.
-
 Outside of `start mock interview`, the interviewer-side Claude defaults to **developer mode** for maintaining this repo — adding projects, refining the protocol, etc.
+
+## Real run example
+
+Preview a complete real run: [`examples/2026-04-28-todo-list/`](examples/2026-04-28-todo-list/) — the candidate's spec/plan files, final code, the end-of-mock feedback, and a measured cost breakdown.
+
+**Rough fit of a 60-min mock to your plan:**
+
+- **Claude Pro** — tight; likely to hit the 5h rolling window mid-mock. Undersized for serious practice.
+- **Claude Max 5x** — comfortable. ~1 mock per 5h window with headroom.
+- **Claude Max 20x** — plenty of room; multiple mocks per 5h window.
+- **Raw API:** ~$19 for the 60-min coding window, ~$26 for the full experience on Opus 4.7.
+
+(Estimates from the example run; Anthropic's quotas evolve.)
 
 ## Quick start
 

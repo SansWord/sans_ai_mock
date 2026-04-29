@@ -6,6 +6,7 @@ A record of what was built and what was learned, especially around extending the
 
 | Version | What shipped |
 |---|---|
+| [v0.9.7](#v097--promote-example-to-own-section--subscription-tier-cost-framing-2026-04-29-0038) | Promote the example link from a parenthetical inside "How it works" to its own `## Real run example` section between How-it-works and Quick start (better for skim-readers; the example was a top-2 senior-eng-review blocker); reframe cost guidance for subscription users — replace the API-dollar headline with a Pro / Max 5x / Max 20x fit table (Pro tight, Max 5x comfortable, Max 20x plenty of room), keeping raw API as a fallback line for those running on direct API; mirror the same subscription-tier breakdown into the example folder's cost section |
 | [v0.9.6](#v096--first-example-folder--note-file-rationale--cost-numbers-2026-04-28-1756) | Ship the first end-to-end example under `examples/2026-04-28-todo-list/` (candidate's spec/plan files for both features, final code, end-of-mock feedback, per-folder README explaining read order + outcome + measured API cost); add a new "Why the interviewer writes a NOTE file" README section covering durable-memory + candidate-review rationale; measure the 2026-04-28 mock's actual token usage by parsing both interviewer and candidate JSONL transcripts (deduped by `message.id`) and publish the numbers (~$19 for the 60-min coding window, ~$26 for the full experience on Opus 4.7); link the example from the README's How-it-works callout, repo-structure tree, and Problem List; partial-complete the `Examples folder` roadmap backlog item |
 | [v0.9.5](#v095--readme-senior-eng-review-pass-2026-04-28-1736) | First-30-seconds README pass driven by a senior-eng review: add an upfront "60-minute round + Claude Code on interviewer side, anything on candidate side" meta-info line; collapse the redundant "Kickstart prompts" section into the existing Quick start; compress "Repo structure" to a 5-line skeleton (full annotated tree moved to `CONTRIBUTING.md`); shrink the visible Disclaimer prose to a single sentence (audit recipe still in `<details>`); tighten the JSONL-transcript bullet (drop path-encoding mechanics); reframe Status to be honest about what ships today vs the roadmap; fix the lingering "Two Claude (or compatible) sessions" Claude-first framing in How-it-works |
 | [v0.9.4](#v094--contributingmd-split--readme-tightening-2026-04-28-1730) | Move developer-mode kickstart prompts and contributor guidance out of README into a new `CONTRIBUTING.md` at repo root (mode awareness, repo orientation, common tasks, conventions, PR guidance); README "Kickstart prompts" loses the dev-mode subsection in favor of a one-line pointer; "Contributing" section becomes a pointer; "About" → "About Author" with the `**Author:**` prefix dropped; clone command uses the real GitHub URL; closes the `CONTRIBUTING.md` backlog item from `roadmap.md` |
@@ -24,6 +25,29 @@ A record of what was built and what was learned, especially around extending the
 | `[note]` | Useful context, well-documented — good to have written down but you'd find it in the docs |
 | `[insight]` | Non-obvious; meaningfully changes how you design or debug something |
 | `[gotcha]` | A specific trap that bit you; high risk of biting you again — bookmark this |
+
+---
+
+## v0.9.7 — promote example to own section + subscription-tier cost framing (2026-04-29 00:38)
+
+**Review:** not yet
+
+**What was built:**
+- **Promoted the example link to its own `## Real run example` section.** Previously a parenthetical sentence inside "How it works"; now a top-level section between How-it-works and Quick start so it shows up in GitHub's auto-generated TOC and on first scroll. The senior-eng review explicitly flagged "no preview of what 'honest feedback' looks like" as one of the two top blockers — making the example more discoverable directly addresses that.
+- **Reframed cost guidance for subscription users.** Previous version led with "~$19 in API usage" — accurate but not what most readers actually pay. Replaced with a per-plan fit table:
+  - Claude Pro: tight (likely hits the 5h rolling window mid-mock)
+  - Claude Max 5x: comfortable (~1 mock per 5h window with headroom)
+  - Claude Max 20x: plenty of room (multiple mocks per 5h window)
+  - Raw API: ~$19 / ~$26 retained as a fallback line for direct-API users
+- **Mirrored the subscription tiering into `examples/2026-04-28-todo-list/README.md`** — the existing "Claude Code subscription vs raw API" bullet got expanded with sub-bullets for Pro / Max 5x / Max 20x. Headline number and detail breakdown now agree.
+- Section ordering after this release: header → Disclaimer → How it works → **Real run example** (new) → Quick start → Repo structure → Why two sessions → Why the interviewer writes a NOTE file → Files the candidate should NOT peek at → Tips → Contributing → Problem List → About Author. The mechanics-then-preview-then-action flow is now visible without scrolling past redundant content.
+
+**Key technical learnings:**
+- `[insight]` "How much does it cost?" answered in dollars is mostly noise for the subscription audience that drives Claude Code adoption. The right unit for those readers is **fit-against-quota** ("comfortable on Max 5x") not absolute price ("~$19"). Keeping the dollar number as a fallback line for raw-API users covers both audiences without leading with the wrong frame for the majority.
+- `[note]` Anthropic does not publish exact 5h-window quotas and adjusts them periodically — so the right framing is qualitative tiers ("tight / comfortable / plenty of room") rather than precise percentages, which would invite "actually it's 47%, not 50%" pushback that's not the point.
+
+**Process learnings:**
+- `[insight]` Trust signals from a one-line sentence inside an existing section ≠ trust signals from a `##` heading at the same depth as Disclaimer / Quick start / Why two sessions. The same content gets very different visibility based on heading level. When something is the answer to a top blocker, give it the heading. When it's supporting detail, keep it inline.
 
 ---
 
