@@ -6,6 +6,7 @@ A record of what was built and what was learned, especially around extending the
 
 | Version | What shipped |
 |---|---|
+| [v0.9.6](#v096--first-example-folder--note-file-rationale--cost-numbers-2026-04-28-1756) | Ship the first end-to-end example under `examples/2026-04-28-todo-list/` (candidate's spec/plan files for both features, final code, end-of-mock feedback, per-folder README explaining read order + outcome + measured API cost); add a new "Why the interviewer writes a NOTE file" README section covering durable-memory + candidate-review rationale; measure the 2026-04-28 mock's actual token usage by parsing both interviewer and candidate JSONL transcripts (deduped by `message.id`) and publish the numbers (~$19 for the 60-min coding window, ~$26 for the full experience on Opus 4.7); link the example from the README's How-it-works callout, repo-structure tree, and Problem List; partial-complete the `Examples folder` roadmap backlog item |
 | [v0.9.5](#v095--readme-senior-eng-review-pass-2026-04-28-1736) | First-30-seconds README pass driven by a senior-eng review: add an upfront "60-minute round + Claude Code on interviewer side, anything on candidate side" meta-info line; collapse the redundant "Kickstart prompts" section into the existing Quick start; compress "Repo structure" to a 5-line skeleton (full annotated tree moved to `CONTRIBUTING.md`); shrink the visible Disclaimer prose to a single sentence (audit recipe still in `<details>`); tighten the JSONL-transcript bullet (drop path-encoding mechanics); reframe Status to be honest about what ships today vs the roadmap; fix the lingering "Two Claude (or compatible) sessions" Claude-first framing in How-it-works |
 | [v0.9.4](#v094--contributingmd-split--readme-tightening-2026-04-28-1730) | Move developer-mode kickstart prompts and contributor guidance out of README into a new `CONTRIBUTING.md` at repo root (mode awareness, repo orientation, common tasks, conventions, PR guidance); README "Kickstart prompts" loses the dev-mode subsection in favor of a one-line pointer; "Contributing" section becomes a pointer; "About" → "About Author" with the `**Author:**` prefix dropped; clone command uses the real GitHub URL; closes the `CONTRIBUTING.md` backlog item from `roadmap.md` |
 | [v0.9.3](#v093--readme-disclaimer--ai-audit-recipe-2026-04-28-1716) | Add README "Disclaimer" section noting that `CLAUDE.md` and `.claude/` configs auto-load into Claude Code's context, plus a copy-paste `<details>` recipe for asking a fresh-context Claude Code session (launched from outside the cloned repo) to audit configs before running anything; drop two stale CLAUDE.md bullets that described `NOTE-2026-04-28.md` as a "committed example exception" (it was always gitignored) |
@@ -23,6 +24,33 @@ A record of what was built and what was learned, especially around extending the
 | `[note]` | Useful context, well-documented — good to have written down but you'd find it in the docs |
 | `[insight]` | Non-obvious; meaningfully changes how you design or debug something |
 | `[gotcha]` | A specific trap that bit you; high risk of biting you again — bookmark this |
+
+---
+
+## v0.9.6 — first example folder + NOTE-file rationale + cost numbers (2026-04-28 17:56)
+
+**Review:** not yet
+
+**What was built:**
+- **First end-to-end example** at `examples/2026-04-28-todo-list/` — drawn from the real 2026-04-28 mock that produced the v0.9.0 post-mortem. Includes the candidate's `001-status-field.{spec,plan}.md`, `002-remove-todo.{spec,plan}.md`, the final `todo.py` + `test_todo.py`, and `feedback.md` (the end-of-mock feedback file). Plus a per-run `README.md` that frames outcome, read order, and the measured cost. Lightly redacted: only the feedback's "your project CLAUDE.md" reference was edited to disambiguate from the framework's `CLAUDE.md`.
+- **`examples/README.md`** parent index — explains what examples are for, lists the runs available, and notes the single-data-point caveat.
+- **New "Why the interviewer writes a NOTE file" README section** — explicit two-purpose rationale: (1) durable memory across context compaction during a 60-min mock, (2) candidate-review artifact post-mock. Placed right after "Why two sessions" to cluster design-rationale content.
+- **Cost measurement** — parsed both interviewer-side (`~/.claude/projects/-Users-sansword-Source-github-sans-ai-mock/1fc13251-...jsonl`) and candidate-side (`~/.claude/projects/-Users-sansword-Source-ai-coding-first-round/630fa990-...jsonl`) JSONL transcripts with `jq`, deduped by `message.id`, broken out by model. Result: ~$2.79 interviewer + ~$16.36 candidate = ~$19.15 for the 60-min coding window; ~$26.14 for the full experience including setup + Phase 3 feedback delivery. Published the breakdown in the example folder's `README.md` and a one-line callout in the main README's How-it-works section.
+- **README repo-structure tree** — added `examples/` row.
+- **`CLAUDE.md` orientation table** — added a row for `examples/<run>/` (writeable in dev mode; rarely-read in interview mode because past feedback could prime live judgments; readable by candidates as preview / post-mock reference).
+- **`CONTRIBUTING.md` framework-layer list** — added `examples/README.md` pointer.
+- **`roadmap.md`** — `Examples folder` backlog item marked partial-complete with `(v0.9.6 — ...)` parenthetical noting the first example shipped and what's still pending (pair-programmer transcripts, additional runs).
+
+**Key technical learnings:**
+- `[insight]` Cache reads dominate the bill (~50% of cost on this run). Without prompt caching the same usage would have cost ~10x more on the cache_read path. The architecture-level decision to put long-lived files (CLAUDE.md, INTERVIEWER.md, project README, roadmap) into the auto-load context isn't free, but with caching the marginal cost-per-turn collapses by an order of magnitude. Worth knowing when designing protocol surface.
+- `[insight]` Senior-eng "is it $0.50 or $15?" hypothesis was off by ~2x in the more-expensive direction. The honest answer is "~$19 for the live coding window, ~$26 for the full experience" — closer to a coffee-and-lunch than a cheap experiment. Worth showing candidates upfront so they don't bounce on first surprise charge, and worth honest-framing for hiring managers evaluating the kit for team use.
+- `[gotcha]` Claude Code JSONL transcripts have **multiple records per assistant turn** (different `.timestamp` but identical `.message.id` and identical `.message.usage`). Naively summing usage across all records double-counts by ~3x. Always dedupe by `message.id` before summing tokens. The `iterations` field inside `usage` is not a separate cost surface; it's a per-thinking-step breakdown of the same total.
+- `[note]` `cache_creation_input_tokens` splits into `ephemeral_5m_input_tokens` and `ephemeral_1h_input_tokens` (1h cache writes are 2x the input price; 5m writes are 1.25x). On this run all cache writes were 1h — Claude Code currently uses 1h ephemeral caching by default for system context.
+- `[insight]` The senior-eng review specifically called out "no preview of what 'honest feedback' looks like" as one of two top blockers. Shipping the example folder addresses it concretely — the feedback file is publicly verifiable evidence that the rubric isn't vague. The cost section addresses the other half of the trust gap ("what does this actually cost me to try?").
+
+**Process learnings:**
+- `[note]` The flow for this release was driven by reviewer feedback (the senior-eng subagent run identified the gaps), then user-iterated (each new piece — example folder, NOTE-file rationale, cost numbers — was a separate user message). Patching incrementally rather than batching let each piece get scoped and shipped without scope-creep on the rest. The four-patch run (v0.9.3 → v0.9.6) all polished the public surface for LinkedIn promotion.
+- `[note]` Re-using the actual transcripts of the v0.9.0 mock to build the example folder means the artifacts are 100% authentic — no synthesized "looks like a mock" filler. The downside (single data point, single candidate, candidate is the author) is worth flagging in the example README and taking on as a future "more runs" backlog item.
 
 ---
 

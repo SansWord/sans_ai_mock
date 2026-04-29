@@ -53,7 +53,7 @@ The point is **domain variety**: a candidate using this tool for repeated practi
 ## Long-term — community
 
 - [x] ~~**`CONTRIBUTING.md`** — how to add a project, what the contract is, what good roadmaps look like.~~ (v0.9.4 — shipped at repo root, covers mode awareness, dev-mode kickstart prompts, framework vs project layer, common tasks, conventions, and PR guidance.)
-- [ ] **Examples folder** — sample completed mocks (with anonymized transcripts and feedback) so people can see what good practice looks like before doing their own.
+- [ ] **Examples folder** — sample completed mocks (with anonymized transcripts and feedback) so people can see what good practice looks like before doing their own. *(v0.9.6 — partial: first example shipped at `examples/2026-04-28-todo-list/` covering the candidate's spec/plan files, final code, and feedback. Pair-programmer transcripts and additional runs still pending.)*
 - [ ] **LICENSE.** Probably MIT to keep it permissive.
 
 ## Backlog (cold-read + first-mock findings)

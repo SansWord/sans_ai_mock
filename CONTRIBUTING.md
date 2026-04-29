@@ -43,6 +43,7 @@ Read CLAUDE.md for the architecture and orientation, then [add the bank-ledger p
 - [`README.md`](README.md) — public-facing how-to-use.
 - [`roadmap.md`](roadmap.md) — meta-roadmap for the framework itself.
 - [`projects/README.md`](projects/README.md) — the contract every plug-in project must satisfy.
+- [`examples/README.md`](examples/README.md) — index of anonymized real-mock artifacts; read these to see what feedback files look like before pitching the kit to others.
 
 **Project layer** (the plug-ins):
 

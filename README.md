@@ -53,6 +53,8 @@ Two sessions run in parallel — the interviewer side runs in Claude Code (the m
 
 The interviewer picks a project (or asks you to pick), drops feature specs one at a time, observes your work between features, and gives structured feedback at the end. The pair programmer is your hands-on AI coder for the duration.
 
+Want to see what the end-of-mock feedback actually looks like before committing 60 minutes? See [`examples/2026-04-28-todo-list/`](examples/2026-04-28-todo-list/) — a real run on `todo-list` with the candidate's spec/plan files, final code, and the feedback file the interviewer produced. The example folder also includes a **cost breakdown**: the run was roughly **$19 in API usage** during the 60-min coding window (~$26 for the full experience including setup and Phase 3 feedback delivery), interviewer + candidate sides combined, mostly on Opus 4.7.
+
 Outside of `start mock interview`, the interviewer-side Claude defaults to **developer mode** for maintaining this repo — adding projects, refining the protocol, etc.
 
 ## Quick start
@@ -100,6 +102,7 @@ sans_ai_mock/
 ├── feedback_rubric.md     # 6-dimension assessment
 ├── roadmap.md             # tool-extension roadmap
 ├── CONTRIBUTING.md        # how to extend or maintain the tool
+├── examples/              # anonymized artifacts from real mock runs (preview what feedback looks like)
 └── projects/<name>/       # one folder per project domain
 ```
 
@@ -109,6 +112,15 @@ Detailed file-by-file orientation lives in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 - **Realism.** A real AI-round interviewer watches you work but isn't your coding agent. Conflating the two roles in one session leaks the interviewer's roadmap and changes the dynamic.
 - **Surprise.** Each project's `roadmap.md` (in `projects/<name>/`) is read by the interviewer but kept hidden from the candidate. Two separate sessions preserve that.
+
+## Why the interviewer writes a NOTE file
+
+During each mock the interviewer keeps a `projects/<name>/NOTE-<YYYY-MM-DD>.md` scratch file in this repo. Two purposes:
+
+- **Durable memory.** A 60-min mock with a frontier model runs deep into the context window. Writing observations to disk as they happen means context compaction doesn't lose specific evidence — *"at 14:12 the candidate pushed back on the `_UNSET` sentinel"* survives even if the in-context message gets summarized away.
+- **Candidate review.** After feedback is delivered the candidate is welcome to read the NOTE file — the raw moment-by-moment observations that drove the structured feedback. Useful for verifying claims and calibrating future rounds.
+
+NOTE files are gitignored; they stay on disk and don't ship to GitHub.
 
 ## Files the candidate should NOT peek at
 
@@ -134,9 +146,11 @@ You're free to read anytime:
 
 This is meant to grow into a community-maintained practice tool with multiple project domains, languages, and round formats. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to add a project, edit the protocol, or fix bugs surfaced by real mock runs.
 
-## Status
+## Problem List
 
-Ships with the **todo-list** project (Python). Roadmap targets `bank-ledger`, `url-shortener`, `pomodoro-cli`, and others — see [`roadmap.md`](roadmap.md) for what's coming.
+- **todo-list** (Python) — the one problem shipped today. Sample run: [`examples/2026-04-28-todo-list/`](examples/2026-04-28-todo-list/).
+
+More problems are in the queue: `bank-ledger`, `url-shortener`, `pomodoro-cli`, and others. See [`roadmap.md`](roadmap.md).
 
 ## About Author
 

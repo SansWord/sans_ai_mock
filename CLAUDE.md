@@ -90,6 +90,7 @@ These are deliberate, not accidental. Don't undo them without thinking hard abou
 | `projects/<name>/NOTE-<DATE>.md` | rarely (gitignored) | **yes — writes during mock, re-reads at feedback time** | **NO — interviewer scratch** |
 | `projects/<name>/start_folder/README.md` | yes | yes (for picker description) | yes (copied into their workspace) |
 | `projects/<name>/start_folder/<starter>` | yes | yes | yes (copied into their workspace) |
+| `examples/<run>/` | yes (when adding examples) | rarely — past feedback could prime live judgments | yes (preview / post-mock reference) |
 
 ## Common developer-mode tasks
 
