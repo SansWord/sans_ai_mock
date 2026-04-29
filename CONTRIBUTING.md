@@ -48,6 +48,20 @@ Read CLAUDE.md for the architecture and orientation, then [add the bank-ledger p
 
 - `projects/<name>/` — one folder per project domain. Currently: `projects/todo-list/`.
 
+Each project folder follows this layout:
+
+```
+projects/<name>/
+├── README.md          # interviewer-facing brief (question metadata, what it exercises, where to look)
+├── roadmap.md         # interviewer-only feature list (3 base + 1-2 stretch) — stays here
+├── NOTE-<DATE>.md     # interviewer scratch notes per mock run — gitignored, generated at runtime
+└── start_folder/      # candidate-facing bundle — copied to candidate's workspace
+    ├── README.md      # candidate-facing orientation
+    ├── <starter code>
+    ├── <tests>
+    └── <feature-1 spec>
+```
+
 **Dependency direction (strict): project depends on framework, never the reverse.**
 
 If you find yourself editing `INTERVIEWER.md` or `feedback_rubric.md` to support a new project, that's a smell — push back to the project layer. See `CLAUDE.md` → "Architecture: container + plug-in projects" for why.

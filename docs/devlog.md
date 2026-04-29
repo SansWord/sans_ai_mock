@@ -6,6 +6,7 @@ A record of what was built and what was learned, especially around extending the
 
 | Version | What shipped |
 |---|---|
+| [v0.9.5](#v095--readme-senior-eng-review-pass-2026-04-28-1736) | First-30-seconds README pass driven by a senior-eng review: add an upfront "60-minute round + Claude Code on interviewer side, anything on candidate side" meta-info line; collapse the redundant "Kickstart prompts" section into the existing Quick start; compress "Repo structure" to a 5-line skeleton (full annotated tree moved to `CONTRIBUTING.md`); shrink the visible Disclaimer prose to a single sentence (audit recipe still in `<details>`); tighten the JSONL-transcript bullet (drop path-encoding mechanics); reframe Status to be honest about what ships today vs the roadmap; fix the lingering "Two Claude (or compatible) sessions" Claude-first framing in How-it-works |
 | [v0.9.4](#v094--contributingmd-split--readme-tightening-2026-04-28-1730) | Move developer-mode kickstart prompts and contributor guidance out of README into a new `CONTRIBUTING.md` at repo root (mode awareness, repo orientation, common tasks, conventions, PR guidance); README "Kickstart prompts" loses the dev-mode subsection in favor of a one-line pointer; "Contributing" section becomes a pointer; "About" → "About Author" with the `**Author:**` prefix dropped; clone command uses the real GitHub URL; closes the `CONTRIBUTING.md` backlog item from `roadmap.md` |
 | [v0.9.3](#v093--readme-disclaimer--ai-audit-recipe-2026-04-28-1716) | Add README "Disclaimer" section noting that `CLAUDE.md` and `.claude/` configs auto-load into Claude Code's context, plus a copy-paste `<details>` recipe for asking a fresh-context Claude Code session (launched from outside the cloned repo) to audit configs before running anything; drop two stale CLAUDE.md bullets that described `NOTE-2026-04-28.md` as a "committed example exception" (it was always gitignored) |
 | [v0.9.2](#v092--trigger-phrase-standardization--interviewer-bash-allowlist-2026-04-28-1632) | Standardize the mock-interview trigger phrase to a single canonical `start mock interview` (drop the dual "first-time" wording); add `.claude/settings.json` with a tight read-only Bash allowlist (`ls`, `git status,diff,log,show`, `cat`, `date`, `wc`, `jq`) so per-feature inspection no longer prompts |
@@ -22,6 +23,30 @@ A record of what was built and what was learned, especially around extending the
 | `[note]` | Useful context, well-documented — good to have written down but you'd find it in the docs |
 | `[insight]` | Non-obvious; meaningfully changes how you design or debug something |
 | `[gotcha]` | A specific trap that bit you; high risk of biting you again — bookmark this |
+
+---
+
+## v0.9.5 — README senior-eng review pass (2026-04-28 17:36)
+
+**Review:** not yet
+
+**What was built:**
+- **Upfront meta-info line** — directly under the opening tagline: *"60-minute round. You need Claude Code on the interviewer side; on the candidate side, use any AI tool (Claude Code, Cursor, Copilot CLI, Gemini CLI) or none."* Answers the two "first 30 seconds" questions a senior-eng reader has (time budget + tool requirements) without making them scroll.
+- **Collapsed redundant Kickstart-prompts section** — the README previously had a "Kickstart prompts > To run a mock" section that was a teaser version of the Quick start walkthrough below it. Removed the entire section; Quick start is now the canonical "how to run." The dev-mode pointer to `CONTRIBUTING.md` lives in the bottom Contributing section, so no info was lost.
+- **Compressed Repo structure** — went from a ~21-line annotated tree to a 5-line skeleton showing only top-level files + `projects/<name>/`. Detailed per-file annotation (interviewer-facing brief, hidden roadmap, NOTE scratch, candidate-facing bundle) moved to `CONTRIBUTING.md` "Project layer" section, where it's actually useful (contributors adding a project).
+- **Disclaimer shrunk to one sentence** — the visible prose collapsed from ~3 lines + a follow-up paragraph to a single sentence; the `<details>` audit recipe is unchanged. Less of a speed-bump for readers landing from LinkedIn who just want to try a mock.
+- **JSONL transcript bullet tightened** — dropped the path-encoding mechanics (workspace `/Users/you/scratch` → `~/.claude/projects/-Users-you-scratch/` etc.). The implementation belongs in `INTERVIEWER.md`; the README only needs the *what* (interviewer can quote your prompts) and *why* (deeper feedback). 6 lines → 3.
+- **Status section reframed** — was "Initial release. One project (todo-list)." which contradicted the (now-removed) opening "Multiple project domains" claim. Now: *"Ships with the todo-list project (Python). Roadmap targets bank-ledger, url-shortener, pomodoro-cli, and others."* Honest about today's scope while pointing at the trajectory.
+- **Fixed Claude-first "How it works" framing** — "Two Claude (or compatible) sessions" → "Two sessions run in parallel — the interviewer side runs in Claude Code; the candidate side is tool-agnostic." Closes the longstanding backlog item from v0.9.0 review.
+
+**Key technical learnings:**
+- `[insight]` Senior-eng readers are looking for **time budget and tool requirements within the first scroll**. Burying those in a tip block at line 156 (where the JSONL transcript bullet was) costs you readers who would otherwise have tried the tool. Putting the meta-info line right under the tagline is high-leverage real estate.
+- `[insight]` "Multiple project domains" sounds like a feature claim but is actually a roadmap promise when only one project ships. The right move on a single-project release is to **lead with what you have, point at what's coming**, not the other way around. Senior engs notice the gap and trust drops.
+- `[note]` Two "how to run" sections (a teaser + the real walkthrough) is a common drift pattern — each gets edited independently and they slowly diverge. One canonical location is more maintainable.
+
+**Process learnings:**
+- `[insight]` Asking the assistant to **read the README from a senior-eng candidate's perspective** before shipping the LinkedIn promo flushed out 6 issues that none of the prior shipping passes (v0.9.2/0.9.3/0.9.4) caught — even though those passes also touched the README. The prior passes were author-mode (fix what I notice while editing); the review pass was reader-mode (skim like the actual audience). Different mode, different findings. Worth running explicitly before any "front-door" surface change.
+- `[note]` Three patches in a row (v0.9.3 disclaimer, v0.9.4 CONTRIBUTING split, v0.9.5 review pass) all polishing the public surface before sharing — this is the right cadence for pre-promotion polish. Each one was small enough to ship cleanly; bundling them into one release would have made the diff hard to review and the devlog hard to read.
 
 ---
 

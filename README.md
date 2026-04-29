@@ -1,6 +1,6 @@
 # sans_ai_mock — AI-Round Mock Interview Kit
 
-To run a mock, open Claude Code in this folder and say:
+To run a 60-minute mock, open Claude Code in this folder and say:
 
 ---
 
@@ -12,13 +12,11 @@ That phrase puts Claude into interviewer mode. To exit (typically after end-of-m
 
 A reusable, self-contained mock for the **AI-pair-programming interview round** — the kind where you build something while collaborating with an AI coding agent, and an interviewer assesses how well you direct, push back on, and verify the agent's output.
 
-Multiple project domains. One protocol. Honest feedback.
+**60-minute round.** You need Claude Code on the interviewer side; on the candidate side, use any AI tool (Claude Code, Cursor, Copilot CLI, Gemini CLI) or none. One protocol. Honest feedback.
 
 ## Disclaimer
 
-`CLAUDE.md` (and `.claude/` configs) in any repo are **automatically loaded into Claude Code's context** when you open a session in that folder — meaning their instructions become part of how the agent behaves. Always **read `CLAUDE.md`, `INTERVIEWER.md`, and any other auto-loaded files** before running someone else's repo on your machine, here or anywhere. The same caution applies to running unfamiliar code, scripts, or AI prompts in general — review first, then run.
-
-Or have an AI do the review for you — just make sure it's not running inside the repo you're checking.
+`CLAUDE.md` and `.claude/` configs in any repo auto-load into Claude Code's context — they shape how the agent behaves the moment a session opens. Review them before running someone else's repo, or have an AI audit them for you (recipe below).
 
 <details>
 <summary>How to ask Claude Code to audit this repo safely</summary>
@@ -44,27 +42,9 @@ The auditing session has no auto-loaded instructions from the repo, so its revie
 
 </details>
 
-## Kickstart prompts (copy-paste)
-
-### To run a mock
-
-Open Claude Code in the repo root, then send:
-
-```
-start mock interview
-```
-
-The interviewer walks you through the full setup (seniority calibration, project pick, working-directory path, permission grant, pair-programmer tool, briefing) before starting the clock — every time, regardless of whether it's your first mock or your tenth. Have a second terminal ready for your pair programmer.
-
-### To work on the tool itself
-
-Want to extend or maintain the tool (add a project, refine the protocol, fix a bug)? See [`CONTRIBUTING.md`](CONTRIBUTING.md).
-
----
-
 ## How it works
 
-Two Claude (or compatible) sessions run in parallel:
+Two sessions run in parallel — the interviewer side runs in Claude Code (the mode-router lives in `CLAUDE.md`); the candidate side is tool-agnostic.
 
 | Role | Where it runs | How it loads |
 |------|---------------|--------------|
@@ -115,22 +95,15 @@ Outside of `start mock interview`, the interviewer-side Claude defaults to **dev
 ```
 sans_ai_mock/
 ├── README.md              # this file
-├── CLAUDE.md              # mode router: developer mode by default, switches to interviewer on "start mock interview"
-├── INTERVIEWER.md         # interviewer protocol; loaded only when in interview mode
-├── roadmap.md             # meta: roadmap for extending this tool itself
-├── feedback_rubric.md     # 6-dimension assessment guide used at end of mock
-└── projects/
-    ├── README.md              # contract for adding a new project
-    └── <project-name>/        # one folder per project domain
-        ├── README.md          # interviewer-facing brief (question metadata, what it exercises, where to look)
-        ├── roadmap.md         # interviewer-only feature list (3 base + 1-2 stretch) — stays here
-        ├── NOTE-<DATE>.md     # interviewer scratch notes per mock run — gitignored, generated at runtime
-        └── start_folder/      # candidate-facing bundle — copied to candidate's workspace
-            ├── README.md      # candidate-facing orientation
-            ├── <starter code>
-            ├── <tests>
-            └── <feature-1 spec>
+├── CLAUDE.md              # mode router (developer mode by default)
+├── INTERVIEWER.md         # interviewer protocol
+├── feedback_rubric.md     # 6-dimension assessment
+├── roadmap.md             # tool-extension roadmap
+├── CONTRIBUTING.md        # how to extend or maintain the tool
+└── projects/<name>/       # one folder per project domain
 ```
+
+Detailed file-by-file orientation lives in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Why two sessions
 
@@ -153,7 +126,7 @@ You're free to read anytime:
 
 - **Treat it like the real thing.** Time pressure, narrate decisions, write specs first, push back on the pair programmer's bad suggestions.
 - **Don't peek at the project's `roadmap.md`** — the surprise of follow-up features is the point.
-- **If you used Claude Code, the interviewer can read your transcript directly.** Claude Code stores session transcripts as JSONL under `~/.claude/projects/<encoded-path>/`. The encoding roughly replaces `/` with `-` (e.g. workspace `/Users/you/scratch` → `~/.claude/projects/-Users-you-scratch/`), but additional special characters in your path may be encoded too — if the derived path doesn't match, the interviewer will list `~/.claude/projects/` and find the right entry. Since the interviewer already knows your workspace path from setup, at wrap-up time they'll just ask for permission to read that JSONL directory — no copy-paste. This unlocks deeper feedback (quoting specific prompts, identifying push-back vs. one-shot-accept patterns). With other tools or no AI, the interviewer works from observation only.
+- **If you used Claude Code, the interviewer can read your transcript directly.** At wrap-up they'll ask permission to read your session JSONL under `~/.claude/projects/`. This unlocks deeper feedback — quoting specific prompts, identifying push-back vs. one-shot-accept patterns. With other tools or no AI, the interviewer works from observation only.
 - **Use whatever AI tool you want — or none.** The pair-programmer side is intentionally not specified. Claude Code, Cursor, Copilot CLI, Gemini CLI, plain editor — your call. Bring your own system prompt if you have one.
 - **Re-do mocks with different projects** as new ones are added under `projects/`. Repetition on the same project loses the surprise but still trains workflow muscle.
 
@@ -163,7 +136,7 @@ This is meant to grow into a community-maintained practice tool with multiple pr
 
 ## Status
 
-Initial release. One project (todo-list). Honest feedback at the end. See top-level `roadmap.md` for what's coming.
+Ships with the **todo-list** project (Python). Roadmap targets `bank-ledger`, `url-shortener`, `pomodoro-cli`, and others — see [`roadmap.md`](roadmap.md) for what's coming.
 
 ## About Author
 
