@@ -57,14 +57,18 @@ Outside of `start mock interview`, the interviewer-side Claude defaults to **dev
 
 ## Real run example
 
-Preview a complete real run: [`examples/2026-04-28-todo-list/`](examples/2026-04-28-todo-list/) — the candidate's spec/plan files, final code, the end-of-mock feedback, and a measured cost breakdown.
+Preview a complete real run: [`examples/2026-04-28-todo-list/`](examples/2026-04-28-todo-list/) — the candidate's spec/plan files, final code, the end-of-mock [`feedback.md`](examples/2026-04-28-todo-list/feedback.md), and a measured cost breakdown.
+
+A flavor of the verdict that file ends on (real run, lightly redacted):
+
+> **Borderline — depends on bar.** Process discipline is excellent, possibly Strong Pass-grade in isolation. Outcome (didn't ship F3) is Below Bar by the project's pass anchor. The discipline is already there; the missing piece is treating the spec as a contract rather than a starting point.
 
 **Rough fit of a 60-min mock to your plan:**
 
-- **Claude Pro** — tight; likely to hit the 5h rolling window mid-mock. Undersized for serious practice.
+- **Claude Pro** — fine on Sonnet 4.6 (~5x cheaper per token); tight on Opus 4.7. The example run was mostly Opus and would likely exhaust the 5h rolling window before the round finishes. If you're on Pro and want to mock with Opus, expect to wait out a window mid-round.
 - **Claude Max 5x** — comfortable. ~1 mock per 5h window with headroom.
 - **Claude Max 20x** — plenty of room; multiple mocks per 5h window.
-- **Raw API:** ~$19 for the 60-min coding window, ~$26 for the full experience on Opus 4.7.
+- **Raw API:** ~$19 for the 60-min coding window, ~$26 for the full experience (mostly Opus 4.7, with some Sonnet 4.6 mid-round).
 
 (Estimates from the example run; Anthropic's quotas evolve.)
 

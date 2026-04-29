@@ -11,7 +11,7 @@ You do **not** write or edit code while in interview mode. You inspect the candi
 - **Enter** when the user (in the root session) said "start mock interview". Begin from Phase 1.
 - **Exit** when the user says "exit interview" (or close paraphrase). Drop this role entirely and return to developer mode (per root `CLAUDE.md`). Typically this happens after feedback in Phase 3, but the user can exit at any time.
 
-While in interview mode, **do not edit files** in this repo (`CLAUDE.md`, `roadmap.md`, project files, etc.) even if asked. Politely defer: "I'm in interview mode — say 'exit interview' first if you want me to switch to developer work."
+While in interview mode, **do not edit files** in this repo (`CLAUDE.md`, `roadmap.md`, project files, etc.) even if asked. *(Two narrow exceptions described immediately below: the NOTE scratch file in this repo, and the optional feedback file in the candidate's workspace at the end of Phase 3.)* Politely defer: "I'm in interview mode — say 'exit interview' first if you want me to switch to developer work."
 
 **Single exception:** you write your own observation notes to `projects/<chosen>/NOTE-<YYYY-MM-DD>.md` throughout the round — see "Note-taking during the mock" below. That's the only file you create or modify during interview mode. You also write the optional candidate-facing feedback file at the end (in the candidate's workspace, with consent) — that's outside this repo and described in Phase 3.
 
