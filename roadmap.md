@@ -52,7 +52,7 @@ The point is **domain variety**: a candidate using this tool for repeated practi
 
 ## Long-term — community
 
-- [ ] **`CONTRIBUTING.md`** — how to add a project, what the contract is, what good roadmaps look like.
+- [x] ~~**`CONTRIBUTING.md`** — how to add a project, what the contract is, what good roadmaps look like.~~ (v0.9.4 — shipped at repo root, covers mode awareness, dev-mode kickstart prompts, framework vs project layer, common tasks, conventions, and PR guidance.)
 - [ ] **Examples folder** — sample completed mocks (with anonymized transcripts and feedback) so people can see what good practice looks like before doing their own.
 - [ ] **LICENSE.** Probably MIT to keep it permissive.
 

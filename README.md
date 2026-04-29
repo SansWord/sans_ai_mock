@@ -56,22 +56,9 @@ start mock interview
 
 The interviewer walks you through the full setup (seniority calibration, project pick, working-directory path, permission grant, pair-programmer tool, briefing) before starting the clock — every time, regardless of whether it's your first mock or your tenth. Have a second terminal ready for your pair programmer.
 
-### To work on the tool itself (developer mode)
+### To work on the tool itself
 
-Open Claude Code in the repo root, then send:
-
-```
-Read CLAUDE.md and roadmap.md, then summarize the current state and the most useful
-next task to work on. Don't start coding yet — wait for me to pick.
-```
-
-This loads architecture + meta-roadmap context without committing to any specific change. The default mode is developer mode, so Claude is free to edit files once you give direction.
-
-If you already know what you want:
-
-```
-Read CLAUDE.md for the architecture and orientation, then [add the bank-ledger project / fix X / etc].
-```
+Want to extend or maintain the tool (add a project, refine the protocol, fix a bug)? See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
@@ -92,7 +79,7 @@ Outside of `start mock interview`, the interviewer-side Claude defaults to **dev
 
 1. **Clone the repo:**
    ```sh
-   git clone <repo-url> sans_ai_mock
+   git clone https://github.com/SansWord/sans_ai_mock.git
    cd sans_ai_mock
    ```
 
@@ -172,12 +159,12 @@ You're free to read anytime:
 
 ## Contributing
 
-This is meant to grow into a community-maintained practice tool with multiple project domains, languages, and round formats. See `roadmap.md` (top-level) for the meta-plan, and `projects/README.md` for the contract on adding a new project.
+This is meant to grow into a community-maintained practice tool with multiple project domains, languages, and round formats. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to add a project, edit the protocol, or fix bugs surfaced by real mock runs.
 
 ## Status
 
 Initial release. One project (todo-list). Honest feedback at the end. See top-level `roadmap.md` for what's coming.
 
-## About
+## About Author
 
-**Author:** SansWord (Wen-Kai Huang) — [LinkedIn](https://www.linkedin.com/in/sansword/) · [Resume](https://sansword.github.io/resume/). Currently between roles and spending the time on agentic development and Claude Code workflows; the resume covers the rest of the engineering story. Reach out if you'd like to talk about AI-pair-programming interviews, hiring assessment design, building tools with Claude Code — or if you're hiring.
+SansWord (Wen-Kai Huang) — [LinkedIn](https://www.linkedin.com/in/sansword/) · [Resume](https://sansword.github.io/resume/). Currently between roles and spending the time on agentic development and Claude Code workflows; the resume covers the rest of the engineering story. Reach out if you'd like to talk about AI-pair-programming interviews, hiring assessment design, building tools with Claude Code — or if you're hiring.

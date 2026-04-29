@@ -6,6 +6,7 @@ A record of what was built and what was learned, especially around extending the
 
 | Version | What shipped |
 |---|---|
+| [v0.9.4](#v094--contributingmd-split--readme-tightening-2026-04-28-1730) | Move developer-mode kickstart prompts and contributor guidance out of README into a new `CONTRIBUTING.md` at repo root (mode awareness, repo orientation, common tasks, conventions, PR guidance); README "Kickstart prompts" loses the dev-mode subsection in favor of a one-line pointer; "Contributing" section becomes a pointer; "About" → "About Author" with the `**Author:**` prefix dropped; clone command uses the real GitHub URL; closes the `CONTRIBUTING.md` backlog item from `roadmap.md` |
 | [v0.9.3](#v093--readme-disclaimer--ai-audit-recipe-2026-04-28-1716) | Add README "Disclaimer" section noting that `CLAUDE.md` and `.claude/` configs auto-load into Claude Code's context, plus a copy-paste `<details>` recipe for asking a fresh-context Claude Code session (launched from outside the cloned repo) to audit configs before running anything; drop two stale CLAUDE.md bullets that described `NOTE-2026-04-28.md` as a "committed example exception" (it was always gitignored) |
 | [v0.9.2](#v092--trigger-phrase-standardization--interviewer-bash-allowlist-2026-04-28-1632) | Standardize the mock-interview trigger phrase to a single canonical `start mock interview` (drop the dual "first-time" wording); add `.claude/settings.json` with a tight read-only Bash allowlist (`ls`, `git status,diff,log,show`, `cat`, `date`, `wc`, `jq`) so per-feature inspection no longer prompts |
 | [v0.9.1](#v091--devlog--claudemd-conventions-2026-04-28-1621) | Set up `docs/devlog.md` with TL;DR + learning-tags table; add documentation list, versioning rule, end-of-session reminder, tailored "ship it" shortcut, and GitHub upload safety section to CLAUDE.md |
@@ -21,6 +22,27 @@ A record of what was built and what was learned, especially around extending the
 | `[note]` | Useful context, well-documented — good to have written down but you'd find it in the docs |
 | `[insight]` | Non-obvious; meaningfully changes how you design or debug something |
 | `[gotcha]` | A specific trap that bit you; high risk of biting you again — bookmark this |
+
+---
+
+## v0.9.4 — CONTRIBUTING.md split + README tightening (2026-04-28 17:30)
+
+**Review:** not yet
+
+**What was built:**
+- **New `CONTRIBUTING.md` at repo root** — covers mode awareness (don't accidentally trip `start mock interview` while developing), dev-mode kickstart prompts (orientation prompt + "I know what I want" prompt), repo orientation (framework layer vs project layer + the strict "project depends on framework, never reverse" rule), common tasks (adding a project, editing protocol/rubric/roadmap), conventions (versioning, devlog, NOTE-file gitignore, tool-agnostic candidate side), and PR guidance.
+- **README "Kickstart prompts" → "To work on the tool itself"** — collapsed the two dev-mode prompts (orientation + know-what-you-want) into a one-line pointer to `CONTRIBUTING.md`. Trims roughly 18 lines from the README.
+- **README "Contributing" section** — replaced the prose pointing at `roadmap.md` and `projects/README.md` with a one-line pointer to `CONTRIBUTING.md` (which then forwards to those).
+- **README "About" → "About Author"** — retitled and dropped the `**Author:**` bold prefix (since the section only contains author info, the prefix was redundant).
+- **README clone command** — replaced `<repo-url> sans_ai_mock` placeholder with the real `https://github.com/SansWord/sans_ai_mock.git`. Dropped the explicit target dir since the default derived from the URL is already `sans_ai_mock`.
+- **`roadmap.md`** — `CONTRIBUTING.md` backlog item crossed off with `(v0.9.4 — ...)` strikethrough following the v0.9.2 convention.
+
+**Key technical learnings:**
+- `[insight]` GitHub auto-detects `CONTRIBUTING.md` at the repo root and surfaces it on the Issues / PR / "New issue" pages. That's the dominant OSS convention and the reason to prefer it over `DEV.md` or `docs/CONTRIBUTING.md` — same content, free distribution boost.
+- `[note]` Splitting README into "use the tool" vs "extend the tool" matches the natural user mental model. Practitioners arriving from a LinkedIn post don't care about adding projects; contributors arriving from `roadmap.md` don't need the candidate-side workflow tips. Two docs, two audiences, less skim friction for both.
+
+**Process learnings:**
+- `[note]` Three quick patches in a row (v0.9.2 trigger-phrase + Bash allowlist, v0.9.3 disclaimer + audit recipe, v0.9.4 CONTRIBUTING split) all polish the public-facing surface in preparation for sharing on LinkedIn. A repo's "first impression" surface (README + tag/release page) is worth a focused polish pass before promotion — every confusing line costs you a portion of the visitors who bounce.
 
 ---
 
